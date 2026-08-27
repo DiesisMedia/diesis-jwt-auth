@@ -37,7 +37,8 @@ jobs:
           coverage: none
           tools: composer:v2
       - id: version
-        run: echo "value=$(sed -n 's/^ \* Version: //p' diesis-wp-jwt-auth.php)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "value=$(sed -n 's/^ \* Version: //p' diesis-wp-jwt-auth.php)" >> "$GITHUB_OUTPUT"
       - run: chmod +x bin/build-release.sh
       - run: bin/build-release.sh "${{ steps.version.outputs.value }}"
       - uses: actions/upload-artifact@v4
