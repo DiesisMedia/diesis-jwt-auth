@@ -2,6 +2,7 @@ parameters:
     level: 9
     paths:
         - diesis-wp-jwt-auth.php
+        - uninstall.php
         - src
     scanFiles:
         - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
