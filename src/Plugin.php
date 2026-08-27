@@ -93,13 +93,28 @@ final class Plugin
     }
 
     /**
+     * The two network-wide site transient names that cache the JWKS for an
+     * issuer. Centralized so that uninstall cleanup deletes exactly what
+     * jwks() writes.
+     *
+     * @return array{0: string, 1: string} the key set and refresh-marker names
+     */
+    public static function jwksCacheKeys(string $issuer): array
+    {
+        $issuerHash = substr(hash('sha256', rtrim($issuer, '/')), 0, 16);
+
+        return [
+            self::JWKS_CACHE_KEY . '_' . $issuerHash,
+            self::JWKS_REFRESH_KEY . '_' . $issuerHash,
+        ];
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function jwks(string $issuer, bool $forceRefresh): array
     {
-        $issuerHash = substr(hash('sha256', $issuer), 0, 16);
-        $cacheKey = self::JWKS_CACHE_KEY . '_' . $issuerHash;
-        $refreshKey = self::JWKS_REFRESH_KEY . '_' . $issuerHash;
+        [$cacheKey, $refreshKey] = self::jwksCacheKeys($issuer);
         $cached = self::normalizeJwks(get_site_transient($cacheKey));
 
         if (! $forceRefresh && $cached !== null) {
