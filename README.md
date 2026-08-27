@@ -67,6 +67,8 @@ For protected paths, the plugin:
 
 Signing keys are cached for 12 hours. An unknown or rotated key triggers a rate-limited refresh. A previously valid cached key set remains available during a temporary Cloudflare certificate endpoint failure.
 
+The plugin requires a user-bound token with an `email` claim. Cloudflare Access **service tokens** carry a `common_name` instead of an email and are therefore always denied. Keep any machine-to-machine path (cron, XML-RPC, REST) out of the protected paths, or leave it public in both WordPress and the matching Cloudflare Access destination.
+
 ## Development
 
 ```bash

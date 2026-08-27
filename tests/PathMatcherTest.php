@@ -25,6 +25,14 @@ final class PathMatcherTest extends TestCase
         yield 'admin child' => ['/wp-admin/plugins.php', true];
         yield 'similar prefix' => ['/wp-administrator', false];
         yield 'public page' => ['/news/', false];
+        yield 'dot segment login' => ['/a/../wp-login.php', true];
+        yield 'encoded dot segment admin' => ['/%2e%2e/wp-admin/', true];
+        yield 'current dir segment' => ['/./wp-login.php', true];
+        yield 'dot segment inside admin' => ['/wp-admin/./plugins.php', true];
+        yield 'traversal above root' => ['/a/../../wp-admin', true];
+        yield 'dot segment public' => ['/wp-admin/../news/', false];
+        yield 'absolute form login' => ['https://origin.example/wp-login.php', true];
+        yield 'absolute form public' => ['https://origin.example/news/', false];
     }
 
     #[DataProvider('requests')]

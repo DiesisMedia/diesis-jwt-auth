@@ -77,7 +77,7 @@ final class Settings
         $audience = isset($input['audience']) && is_string($input['audience'])
             ? sanitize_text_field($input['audience'])
             : '';
-        $enabled = isset($input['enabled']) && $input['enabled'] === '1';
+        $enabled = isset($input['enabled']) && in_array($input['enabled'], ['1', 1, true], true);
 
         if ($issuer !== '' && ! self::isCloudflareAccessIssuer($issuer)) {
             add_settings_error(self::OPTION, 'invalid_issuer', __('The issuer must be an HTTPS cloudflareaccess.com URL.', 'diesis-wp-jwt-auth'));

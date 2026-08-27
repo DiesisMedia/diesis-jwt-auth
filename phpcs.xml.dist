@@ -2,6 +2,7 @@
 <ruleset name="Diesis Cloudflare Access JWT Auth">
     <description>Coding standards for Diesis Cloudflare Access JWT Auth.</description>
     <file>diesis-wp-jwt-auth.php</file>
+    <file>uninstall.php</file>
     <file>src</file>
     <exclude-pattern>vendor/*</exclude-pattern>
     <arg name="basepath" value="."/>
