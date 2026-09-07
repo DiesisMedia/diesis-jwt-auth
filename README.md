@@ -78,7 +78,7 @@ composer install
 composer test
 composer analyse
 composer lint
-bin/build-release.sh 1.0.1
+bin/build-release.sh 1.1.0
 ```
 
 ## License
