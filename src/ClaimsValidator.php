@@ -16,29 +16,32 @@ final class ClaimsValidator
     ) {
     }
 
-    public function validate(object $claims): ValidationResult
+    /**
+     * @return DenialReason|null null when every claim checks out
+     */
+    public function validate(object $claims): ?DenialReason
     {
         if (! isset($claims->iss) || ! is_string($claims->iss) || ! hash_equals($this->issuer, rtrim($claims->iss, '/'))) {
-            return ValidationResult::deny('issuer_mismatch');
+            return DenialReason::IssuerMismatch;
         }
 
         if (! $this->hasExpectedAudience($claims->aud ?? null)) {
-            return ValidationResult::deny('audience_mismatch');
+            return DenialReason::AudienceMismatch;
         }
 
         if (! isset($claims->exp) || (! is_int($claims->exp) && ! is_float($claims->exp))) {
-            return ValidationResult::deny('expiration_missing');
+            return DenialReason::ExpirationMissing;
         }
 
         if (! isset($claims->email) || ! is_string($claims->email) || ! is_email($claims->email)) {
-            return ValidationResult::deny('email_missing');
+            return DenialReason::EmailMissing;
         }
 
         if ($this->allowedEmails !== [] && ! $this->emailIsAllowed($claims->email)) {
-            return ValidationResult::deny('email_not_allowed');
+            return DenialReason::EmailNotAllowed;
         }
 
-        return ValidationResult::allow();
+        return null;
     }
 
     private function hasExpectedAudience(mixed $audience): bool

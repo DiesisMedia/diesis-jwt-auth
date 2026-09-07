@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Diesis\WpJwtAuth\Tests;
 
 use Diesis\WpJwtAuth\ClaimsValidator;
+use Diesis\WpJwtAuth\DenialReason;
 use PHPUnit\Framework\TestCase;
 
 final class ClaimsValidatorTest extends TestCase
@@ -29,7 +30,7 @@ final class ClaimsValidatorTest extends TestCase
             'email' => 'ADMIN@example.com',
         ]);
 
-        self::assertTrue($result->allowed);
+        self::assertNull($result);
     }
 
     public function testRejectsWrongIssuer(): void
@@ -41,8 +42,7 @@ final class ClaimsValidatorTest extends TestCase
             'email' => 'admin@example.com',
         ]);
 
-        self::assertFalse($result->allowed);
-        self::assertSame('issuer_mismatch', $result->reason);
+        self::assertSame(DenialReason::IssuerMismatch, $result);
     }
 
     public function testRejectsWrongAudience(): void
@@ -54,8 +54,7 @@ final class ClaimsValidatorTest extends TestCase
             'email' => 'admin@example.com',
         ]);
 
-        self::assertFalse($result->allowed);
-        self::assertSame('audience_mismatch', $result->reason);
+        self::assertSame(DenialReason::AudienceMismatch, $result);
     }
 
     public function testRejectsEmailOutsideAllowlist(): void
@@ -67,8 +66,7 @@ final class ClaimsValidatorTest extends TestCase
             'email' => 'other@example.com',
         ]);
 
-        self::assertFalse($result->allowed);
-        self::assertSame('email_not_allowed', $result->reason);
+        self::assertSame(DenialReason::EmailNotAllowed, $result);
     }
 
     public function testRejectsTokenWithoutExpiration(): void
@@ -79,7 +77,6 @@ final class ClaimsValidatorTest extends TestCase
             'email' => 'admin@example.com',
         ]);
 
-        self::assertFalse($result->allowed);
-        self::assertSame('expiration_missing', $result->reason);
+        self::assertSame(DenialReason::ExpirationMissing, $result);
     }
 }

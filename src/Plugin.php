@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Diesis\WpJwtAuth;
 
+/**
+ * WordPress adapter: reads the request, asks Enforcement, and ends the request
+ * with a 403 when it is denied. Runs early on init so nothing later on the
+ * hook sees an unauthenticated request to a protected path.
+ */
 final class Plugin
 {
     private function __construct()
@@ -21,40 +26,19 @@ final class Plugin
     public function enforce(): void
     {
         $settings = Settings::fromStored(get_option(Settings::OPTION, []));
+        $enforcement = new Enforcement($settings, SigningKeyCache::forWordPress($settings->issuer)->keys(...));
+        $denial = $enforcement->decide($this->requestUri(), $this->accessToken());
 
-        if (! $settings->enabled) {
-            return;
+        if ($denial !== null) {
+            $this->deny($denial);
         }
+    }
 
-        $requestUri = isset($_SERVER['REQUEST_URI']) && is_string($_SERVER['REQUEST_URI'])
-            ? wp_unslash($_SERVER['REQUEST_URI'])
-            : '/';
-        $matcher = new PathMatcher($settings->protectedPaths, $settings->excludedPaths);
+    private function requestUri(): string
+    {
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
 
-        if (! $matcher->protects($requestUri)) {
-            return;
-        }
-
-        $token = $this->accessToken();
-
-        if ($token === '') {
-            $this->deny('token_missing');
-        }
-
-        $validator = new ClaimsValidator(
-            $settings->issuer,
-            $settings->audience,
-            $settings->allowedEmails,
-        );
-        $verifier = new AccessTokenVerifier(
-            $validator,
-            SigningKeyCache::forWordPress($settings->issuer)->keys(...),
-        );
-        $result = $verifier->verify($token);
-
-        if (! $result->allowed) {
-            $this->deny($result->reason);
-        }
+        return is_string($requestUri) ? wp_unslash($requestUri) : '/';
     }
 
     private function accessToken(): string
@@ -64,10 +48,10 @@ final class Plugin
         return is_string($token) ? trim(wp_unslash($token)) : '';
     }
 
-    private function deny(string $reason): never
+    private function deny(DenialReason $reason): never
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('Diesis Cloudflare Access JWT denied a request: ' . sanitize_key($reason));
+            error_log('Diesis Cloudflare Access JWT denied a request: ' . $reason->value);
         }
 
         nocache_headers();
