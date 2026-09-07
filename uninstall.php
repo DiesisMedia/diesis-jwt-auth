@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-use Diesis\WpJwtAuth\Plugin;
+use Diesis\WpJwtAuth\SigningKeyCache;
 
 if (! defined('WP_UNINSTALL_PLUGIN')) {
     exit;
@@ -71,7 +71,5 @@ if (is_multisite()) {
 // database rows and any persistent object cache entry, which a direct SQL
 // delete would miss when Redis or Memcached backs the site-transient group.
 foreach (array_keys($diesisWpJwtAuthIssuers) as $diesisWpJwtAuthIssuer) {
-    foreach (Plugin::jwksCacheKeys($diesisWpJwtAuthIssuer) as $diesisWpJwtAuthKey) {
-        delete_site_transient($diesisWpJwtAuthKey);
-    }
+    SigningKeyCache::forWordPress($diesisWpJwtAuthIssuer)->purge();
 }

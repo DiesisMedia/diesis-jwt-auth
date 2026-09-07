@@ -15,7 +15,8 @@ final class AccessTokenVerifier
     private readonly Closure $jwksProvider;
 
     /**
-     * @param callable(bool): array<string, mixed> $jwksProvider
+     * @param callable(bool): array<string, mixed> $jwksProvider receives true when
+     *   the cached set could not verify the token; may throw SigningKeysUnavailable
      */
     public function __construct(
         private readonly ClaimsValidator $claimsValidator,
@@ -38,6 +39,11 @@ final class AccessTokenVerifier
             foreach ([false, true] as $refreshKeys) {
                 try {
                     $jwks = ($this->jwksProvider)($refreshKeys);
+                } catch (SigningKeysUnavailable) {
+                    return ValidationResult::deny('keys_unavailable');
+                }
+
+                try {
                     $keys = JWK::parseKeySet($jwks, 'RS256');
                     $claims = JWT::decode($token, $keys);
 

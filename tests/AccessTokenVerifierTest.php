@@ -6,6 +6,7 @@ namespace Diesis\WpJwtAuth\Tests;
 
 use Diesis\WpJwtAuth\AccessTokenVerifier;
 use Diesis\WpJwtAuth\ClaimsValidator;
+use Diesis\WpJwtAuth\SigningKeysUnavailable;
 use Firebase\JWT\JWT;
 use PHPUnit\Framework\TestCase;
 
@@ -130,6 +131,31 @@ final class AccessTokenVerifierTest extends TestCase
 
         self::assertTrue($verifier->verify($token)->allowed);
         self::assertSame([false, true], $refreshAttempts);
+    }
+
+    public function testDeniesWithItsOwnReasonWhenSigningKeysAreUnavailable(): void
+    {
+        $attempts = 0;
+        $verifier = new AccessTokenVerifier(
+            new ClaimsValidator('https://team.cloudflareaccess.com', 'expected-audience'),
+            function (bool $forceRefresh) use (&$attempts): array {
+                $attempts++;
+
+                throw new SigningKeysUnavailable('offline');
+            },
+        );
+        $token = JWT::encode([
+            'iss' => 'https://team.cloudflareaccess.com',
+            'aud' => ['expected-audience'],
+            'exp' => time() + 300,
+            'email' => 'admin@example.com',
+        ], $this->privateKey, 'RS256', 'test-key');
+
+        $result = $verifier->verify($token);
+
+        self::assertFalse($result->allowed);
+        self::assertSame('keys_unavailable', $result->reason);
+        self::assertSame(1, $attempts);
     }
 
     private function verifier(): AccessTokenVerifier
