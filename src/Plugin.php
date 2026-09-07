@@ -25,8 +25,11 @@ final class Plugin
 
     public function enforce(): void
     {
-        $settings = Settings::fromStored(get_option(Settings::OPTION, []));
-        $enforcement = new Enforcement($settings, SigningKeyCache::forWordPress($settings->issuer)->keys(...));
+        $settings = Settings::parse(get_option(Settings::OPTION, []));
+        $enforcement = new Enforcement(
+            $settings,
+            static fn (bool $forceRefresh): array => SigningKeyCache::forWordPress($settings->issuer)->keys($forceRefresh),
+        );
         $denial = $enforcement->decide($this->requestUri(), $this->accessToken());
 
         if ($denial !== null) {

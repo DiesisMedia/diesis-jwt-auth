@@ -13,7 +13,8 @@ use Closure;
  * - a fetched key set is cached for 12 hours;
  * - every fetch attempt, successful or not, is recorded; a forced refresh
  *   within 5 minutes of the last attempt is not performed, so an unknown key
- *   id or an unreachable issuer costs at most one fetch per 5 minutes;
+ *   id costs at most one extra fetch per 5 minutes and a request that finds
+ *   nothing cached fetches once, never twice;
  * - when a fetch fails or returns a malformed body, a previously cached set
  *   keeps being served; with nothing cached, SigningKeysUnavailable is thrown.
  */

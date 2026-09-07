@@ -7,12 +7,12 @@ namespace Diesis\WpJwtAuth;
 /**
  * The plugin's configuration as an immutable value.
  *
- * Both ways of obtaining it, reading the stored option row and sanitizing
- * admin form input, run through the same normalization so the rules for
- * enabled, issuer, audience, allowed emails and path patterns exist once.
- * A stored issuer that fails the Cloudflare Access host check disables
- * enforcement instead of denying requests: a bad option row must never lock
- * the site.
+ * The stored option row and admin form input are parsed by the same code, so
+ * the rules for enabled, issuer, audience, allowed emails and path patterns
+ * exist once. Input that cannot be trusted (an issuer outside Cloudflare
+ * Access, enforcement without issuer or audience) is recorded in $problems
+ * and disables enforcement instead of denying requests: a bad option row must
+ * never lock the site.
  */
 final class Settings
 {
@@ -24,6 +24,7 @@ final class Settings
      * @param list<string> $allowedEmails
      * @param list<string> $protectedPaths
      * @param list<string> $excludedPaths
+     * @param list<SettingsProblem> $problems
      */
     private function __construct(
         public readonly bool $enabled,
@@ -32,28 +33,13 @@ final class Settings
         public readonly array $allowedEmails,
         public readonly array $protectedPaths,
         public readonly array $excludedPaths,
+        public readonly array $problems,
     ) {
-    }
-
-    /**
-     * Build from whatever get_option() returned for the stored row.
-     */
-    public static function fromStored(mixed $stored): self
-    {
-        return self::normalize($stored, false);
-    }
-
-    /**
-     * Build from admin form input, reporting problems through settings errors.
-     */
-    public static function sanitize(mixed $input): self
-    {
-        return self::normalize($input, true);
     }
 
     public static function defaults(): self
     {
-        return self::fromStored([]);
+        return self::parse([]);
     }
 
     /**
@@ -80,9 +66,13 @@ final class Settings
         ];
     }
 
-    private static function normalize(mixed $input, bool $reportErrors): self
+    /**
+     * Parse the stored option row or raw admin form input.
+     */
+    public static function parse(mixed $input): self
     {
         $input = is_array($input) ? $input : [];
+        $problems = [];
         $issuer = isset($input['issuer']) && is_string($input['issuer'])
             ? rtrim(esc_url_raw(trim($input['issuer'])), '/')
             : '';
@@ -92,19 +82,13 @@ final class Settings
         $enabled = isset($input['enabled']) && in_array($input['enabled'], ['1', 1, true], true);
 
         if ($issuer !== '' && ! self::isCloudflareAccessIssuer($issuer)) {
-            if ($reportErrors) {
-                add_settings_error(self::OPTION, 'invalid_issuer', __('The issuer must be an HTTPS cloudflareaccess.com URL.', 'diesis-wp-jwt-auth'));
-            }
-
+            $problems[] = SettingsProblem::InvalidIssuer;
             $issuer = '';
             $enabled = false;
         }
 
         if ($enabled && ($issuer === '' || $audience === '')) {
-            if ($reportErrors) {
-                add_settings_error(self::OPTION, 'missing_configuration', __('Issuer and audience are required before enforcement can be enabled.', 'diesis-wp-jwt-auth'));
-            }
-
+            $problems[] = SettingsProblem::MissingConfiguration;
             $enabled = false;
         }
 
@@ -115,6 +99,7 @@ final class Settings
             self::emails($input['allowed_emails'] ?? ''),
             self::paths($input['protected_paths'] ?? '', self::DEFAULT_PROTECTED_PATHS),
             self::paths($input['excluded_paths'] ?? '', []),
+            $problems,
         );
     }
 

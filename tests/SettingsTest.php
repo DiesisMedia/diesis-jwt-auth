@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace Diesis\WpJwtAuth\Tests;
 
 use Diesis\WpJwtAuth\Settings;
+use Diesis\WpJwtAuth\SettingsProblem;
 use PHPUnit\Framework\TestCase;
 
 final class SettingsTest extends TestCase
 {
-
-
     public function testAcceptsCloudflareIssuerAndEnablesEnforcement(): void
     {
-        $result = Settings::sanitize([
+        $result = Settings::parse([
             'enabled' => '1',
             'issuer' => 'https://team.cloudflareaccess.com/',
             'audience' => '  audience-tag  ',
@@ -26,7 +25,7 @@ final class SettingsTest extends TestCase
 
     public function testRejectsNonCloudflareIssuerAndDisablesEnforcement(): void
     {
-        $result = Settings::sanitize([
+        $result = Settings::parse([
             'enabled' => '1',
             'issuer' => 'https://attacker.example',
             'audience' => 'audience-tag',
@@ -36,9 +35,20 @@ final class SettingsTest extends TestCase
         self::assertFalse($result['enabled']);
     }
 
+    public function testProblemsNameWhatDisabledEnforcement(): void
+    {
+        $rejectedIssuer = Settings::parse(['enabled' => '1', 'issuer' => 'https://attacker.example', 'audience' => 'a']);
+        $missingAudience = Settings::parse(['enabled' => '1', 'issuer' => 'https://team.cloudflareaccess.com']);
+        $complete = Settings::parse(['enabled' => '1', 'issuer' => 'https://team.cloudflareaccess.com', 'audience' => 'a']);
+
+        self::assertSame([SettingsProblem::InvalidIssuer], $rejectedIssuer->problems);
+        self::assertSame([SettingsProblem::MissingConfiguration], $missingAudience->problems);
+        self::assertSame([], $complete->problems);
+    }
+
     public function testRejectsIssuerWithPath(): void
     {
-        $result = Settings::sanitize([
+        $result = Settings::parse([
             'issuer' => 'https://team.cloudflareaccess.com/extra',
         ])->toArray();
 
@@ -47,7 +57,7 @@ final class SettingsTest extends TestCase
 
     public function testEnforcementNeedsIssuerAndAudience(): void
     {
-        $result = Settings::sanitize([
+        $result = Settings::parse([
             'enabled' => '1',
             'issuer' => 'https://team.cloudflareaccess.com',
             'audience' => '',
@@ -58,7 +68,7 @@ final class SettingsTest extends TestCase
 
     public function testEnabledAcceptsBooleanTrueForProgrammaticUpdates(): void
     {
-        $result = Settings::sanitize([
+        $result = Settings::parse([
             'enabled' => true,
             'issuer' => 'https://team.cloudflareaccess.com',
             'audience' => 'audience-tag',
@@ -69,7 +79,7 @@ final class SettingsTest extends TestCase
 
     public function testEmailsAreLowercasedDeduplicatedAndFiltered(): void
     {
-        $result = Settings::sanitize([
+        $result = Settings::parse([
             'allowed_emails' => "Admin@Example.com\nadmin@example.com\nnot-an-email\neditor@example.com",
         ])->toArray();
 
@@ -78,7 +88,7 @@ final class SettingsTest extends TestCase
 
     public function testPathRulesRejectInvalidEntries(): void
     {
-        $result = Settings::sanitize([
+        $result = Settings::parse([
             'protected_paths' => "/wp-admin\nno-leading-slash\n/a/*/b\n/two**\n/valid/*",
         ])->toArray();
 
@@ -87,7 +97,7 @@ final class SettingsTest extends TestCase
 
     public function testProtectedPathsFallBackToDefaultsWhenEmpty(): void
     {
-        $result = Settings::sanitize([
+        $result = Settings::parse([
             'protected_paths' => '',
         ])->toArray();
 
@@ -96,7 +106,7 @@ final class SettingsTest extends TestCase
 
     public function testExcludedPathsStayEmptyWhenEmpty(): void
     {
-        $result = Settings::sanitize([
+        $result = Settings::parse([
             'excluded_paths' => '',
         ])->toArray();
 
@@ -105,7 +115,7 @@ final class SettingsTest extends TestCase
 
     public function testStoredRowIsReadWithNormalizedValues(): void
     {
-        $settings = Settings::fromStored([
+        $settings = Settings::parse([
             'enabled' => true,
             'issuer' => 'https://team.cloudflareaccess.com/',
             'audience' => ' audience-tag ',
@@ -124,7 +134,7 @@ final class SettingsTest extends TestCase
 
     public function testStoredLegacyStringFlagEnablesEnforcement(): void
     {
-        $settings = Settings::fromStored([
+        $settings = Settings::parse([
             'enabled' => '1',
             'issuer' => 'https://team.cloudflareaccess.com',
             'audience' => 'audience-tag',
@@ -135,7 +145,7 @@ final class SettingsTest extends TestCase
 
     public function testStoredNonCloudflareIssuerDisablesEnforcement(): void
     {
-        $settings = Settings::fromStored([
+        $settings = Settings::parse([
             'enabled' => true,
             'issuer' => 'https://attacker.example',
             'audience' => 'audience-tag',
@@ -147,7 +157,7 @@ final class SettingsTest extends TestCase
 
     public function testStoredRowWithoutAudienceDisablesEnforcement(): void
     {
-        $settings = Settings::fromStored([
+        $settings = Settings::parse([
             'enabled' => true,
             'issuer' => 'https://team.cloudflareaccess.com',
         ]);
@@ -157,7 +167,7 @@ final class SettingsTest extends TestCase
 
     public function testMissingOptionYieldsDefaults(): void
     {
-        $settings = Settings::fromStored(false);
+        $settings = Settings::parse(false);
 
         self::assertFalse($settings->enabled);
         self::assertSame('', $settings->issuer);
@@ -167,20 +177,20 @@ final class SettingsTest extends TestCase
 
     public function testStoredEmptyProtectedPathsFallBackToDefaults(): void
     {
-        $settings = Settings::fromStored(['protected_paths' => []]);
+        $settings = Settings::parse(['protected_paths' => []]);
 
         self::assertSame(['/wp-login.php*', '/wp-admin', '/wp-admin/*'], $settings->protectedPaths);
     }
 
     public function testStoredArrayFormRoundTrips(): void
     {
-        $stored = Settings::sanitize([
+        $stored = Settings::parse([
             'enabled' => '1',
             'issuer' => 'https://team.cloudflareaccess.com',
             'audience' => 'audience-tag',
             'allowed_emails' => "admin@example.com",
         ])->toArray();
 
-        self::assertEquals($stored, Settings::fromStored($stored)->toArray());
+        self::assertEquals($stored, Settings::parse($stored)->toArray());
     }
 }

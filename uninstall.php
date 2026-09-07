@@ -23,57 +23,53 @@ require_once __DIR__ . '/src/TransientStore.php';
 require_once __DIR__ . '/src/WordPressTransientStore.php';
 require_once __DIR__ . '/src/SigningKeyCache.php';
 
-/**
- * Forget the current site's settings and report the issuer it used, if any.
- */
-$diesisWpJwtAuthForgetSite = static function (): string {
-    $issuer = Settings::fromStored(get_option(Settings::OPTION, []))->issuer;
-    delete_option(Settings::OPTION);
+(static function (): void {
+    /** @var array<string, true> $issuers */
+    $issuers = [];
 
-    return $issuer;
-};
+    // Forget the current site's settings, remembering the issuer for the purge.
+    // An issuer that fails parsing is left out; any key set cached for it
+    // expires on its own within a day.
+    $forgetSite = static function () use (&$issuers): void {
+        $issuer = Settings::parse(get_option(Settings::OPTION, []))->issuer;
+        delete_option(Settings::OPTION);
 
-/** @var array<string, true> $diesisWpJwtAuthIssuers */
-$diesisWpJwtAuthIssuers = [];
-
-if (is_multisite()) {
-    // Page through the whole network: get_sites() defaults to 100 results.
-    $offset = 0;
-
-    do {
-        $page = get_sites([
-            'fields' => 'ids',
-            'number' => 100,
-            'offset' => $offset,
-            'orderby' => 'id',
-            'order' => 'ASC',
-        ]);
-        $page = is_array($page) ? $page : [];
-
-        foreach ($page as $siteId) {
-            if (! is_int($siteId)) {
-                continue;
-            }
-
-            switch_to_blog($siteId);
-            $issuer = $diesisWpJwtAuthForgetSite();
-            restore_current_blog();
-
-            if ($issuer !== '') {
-                $diesisWpJwtAuthIssuers[$issuer] = true;
-            }
+        if ($issuer !== '') {
+            $issuers[$issuer] = true;
         }
+    };
 
-        $offset += 100;
-    } while (count($page) === 100);
-} else {
-    $issuer = $diesisWpJwtAuthForgetSite();
+    if (is_multisite()) {
+        // Page through the whole network: get_sites() defaults to 100 results.
+        $offset = 0;
 
-    if ($issuer !== '') {
-        $diesisWpJwtAuthIssuers[$issuer] = true;
+        do {
+            $page = get_sites([
+                'fields' => 'ids',
+                'number' => 100,
+                'offset' => $offset,
+                'orderby' => 'id',
+                'order' => 'ASC',
+            ]);
+            $page = is_array($page) ? $page : [];
+
+            foreach ($page as $siteId) {
+                if (! is_int($siteId)) {
+                    continue;
+                }
+
+                switch_to_blog($siteId);
+                $forgetSite();
+                restore_current_blog();
+            }
+
+            $offset += 100;
+        } while (count($page) === 100);
+    } else {
+        $forgetSite();
     }
-}
 
-foreach (array_keys($diesisWpJwtAuthIssuers) as $diesisWpJwtAuthIssuer) {
-    SigningKeyCache::forWordPress($diesisWpJwtAuthIssuer)->purge();
-}
+    foreach (array_keys($issuers) as $issuer) {
+        SigningKeyCache::forWordPress($issuer)->purge();
+    }
+})();

@@ -7,6 +7,7 @@ namespace Diesis\WpJwtAuth\Tests;
 use Diesis\WpJwtAuth\AccessTokenVerifier;
 use Diesis\WpJwtAuth\ClaimsValidator;
 use Diesis\WpJwtAuth\DenialReason;
+use Diesis\WpJwtAuth\SigningKeyCache;
 use Diesis\WpJwtAuth\SigningKeysUnavailable;
 use Firebase\JWT\JWT;
 use PHPUnit\Framework\TestCase;
@@ -104,6 +105,40 @@ final class AccessTokenVerifierTest extends TestCase
 
         self::assertNull($verifier->verify($token));
         self::assertSame([false, true], $refreshAttempts);
+    }
+
+    public function testRotatedKeyIsPickedUpThroughTheRealCache(): void
+    {
+        $store = new InMemoryTransientStore();
+        $rotatedOut = new TestSigningKey();
+        $fetches = 0;
+        $cache = function (int $now) use ($store, $rotatedOut, &$fetches): SigningKeyCache {
+            return new SigningKeyCache(
+                'https://team.cloudflareaccess.com',
+                $store,
+                function () use ($rotatedOut, &$fetches): array {
+                    $fetches++;
+
+                    return $fetches === 1 ? $rotatedOut->jwks : $this->key->jwks;
+                },
+                static fn (): int => $now,
+            );
+        };
+        $cache(time() - 3600)->keys(false);
+        $verifier = new AccessTokenVerifier(
+            new ClaimsValidator('https://team.cloudflareaccess.com', 'expected-audience'),
+            $cache(time())->keys(...),
+        );
+        $token = $this->key->sign([
+            'iss' => 'https://team.cloudflareaccess.com',
+            'aud' => ['expected-audience'],
+            'iat' => time() - 5,
+            'exp' => time() + 300,
+            'email' => 'admin@example.com',
+        ]);
+
+        self::assertNull($verifier->verify($token));
+        self::assertSame(2, $fetches);
     }
 
     public function testDeniesWithItsOwnReasonWhenSigningKeysAreUnavailable(): void

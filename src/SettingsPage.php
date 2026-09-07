@@ -49,7 +49,17 @@ final class SettingsPage
      */
     public function sanitize(mixed $input): array
     {
-        return Settings::sanitize($input)->toArray();
+        $settings = Settings::parse($input);
+
+        foreach ($settings->problems as $problem) {
+            [$code, $message] = match ($problem) {
+                SettingsProblem::InvalidIssuer => ['invalid_issuer', __('The issuer must be an HTTPS cloudflareaccess.com URL.', 'diesis-wp-jwt-auth')],
+                SettingsProblem::MissingConfiguration => ['missing_configuration', __('Issuer and audience are required before enforcement can be enabled.', 'diesis-wp-jwt-auth')],
+            };
+            add_settings_error(Settings::OPTION, $code, $message);
+        }
+
+        return $settings->toArray();
     }
 
     /**
@@ -76,7 +86,7 @@ final class SettingsPage
             return;
         }
 
-        $settings = Settings::fromStored(get_option(Settings::OPTION, []));
+        $settings = Settings::parse(get_option(Settings::OPTION, []));
         $option = Settings::OPTION;
         ?>
         <div class="wrap">

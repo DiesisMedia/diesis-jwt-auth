@@ -65,6 +65,8 @@ For protected paths, the plugin:
 5. optionally checks the authenticated email address;
 6. returns HTTP 403 when any check fails.
 
+Enforcement only runs when the stored settings are complete and the issuer is an HTTPS `cloudflareaccess.com` URL. Settings that fail this check, for example an option row written without the settings page, disable enforcement rather than lock the site.
+
 Signing keys are cached for 12 hours. An unknown or rotated key triggers a rate-limited refresh. A previously valid cached key set remains available during a temporary Cloudflare certificate endpoint failure.
 
 The plugin requires a user-bound token with an `email` claim. Cloudflare Access **service tokens** carry a `common_name` instead of an email and are therefore always denied. Keep any machine-to-machine path (cron, XML-RPC, REST) out of the protected paths, or leave it public in both WordPress and the matching Cloudflare Access destination.

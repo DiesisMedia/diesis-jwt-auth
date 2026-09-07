@@ -28,6 +28,16 @@ final class EnforcementTest extends TestCase
         self::assertNull($enforcement->decide('/wp-admin/plugins.php', ''));
     }
 
+    public function testBadStoredIssuerDisablesEnforcementWithoutTouchingKeys(): void
+    {
+        $settings = Settings::parse(['enabled' => true, 'issuer' => 'https://attacker.example', 'audience' => self::AUDIENCE]);
+        $enforcement = new Enforcement($settings, static function (bool $forceRefresh): array {
+            self::fail('The key provider must not be called when enforcement is disabled.');
+        });
+
+        self::assertNull($enforcement->decide('/wp-admin/plugins.php', 'not.a.jwt'));
+    }
+
     public function testPublicPathNeedsNoToken(): void
     {
         self::assertNull($this->enforcement()->decide('/news/', ''));
@@ -101,7 +111,7 @@ final class EnforcementTest extends TestCase
      */
     private function enforcement(array $overrides = []): Enforcement
     {
-        $settings = Settings::fromStored($overrides + [
+        $settings = Settings::parse($overrides + [
             'enabled' => true,
             'issuer' => self::ISSUER,
             'audience' => self::AUDIENCE,
