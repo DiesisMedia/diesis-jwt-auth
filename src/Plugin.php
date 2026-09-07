@@ -21,25 +21,23 @@ final class Plugin
     public static function boot(string $pluginFile): void
     {
         $plugin = new self();
-        $settings = new Settings();
-        $settings->register();
+        (new SettingsPage())->register($pluginFile);
 
         add_action('init', [$plugin, 'enforce'], -100);
-        add_filter('plugin_action_links_' . plugin_basename($pluginFile), [$plugin, 'settingsLink']);
     }
 
     public function enforce(): void
     {
-        $settings = Settings::get();
+        $settings = Settings::fromStored(get_option(Settings::OPTION, []));
 
-        if (! $settings['enabled']) {
+        if (! $settings->enabled) {
             return;
         }
 
         $requestUri = isset($_SERVER['REQUEST_URI']) && is_string($_SERVER['REQUEST_URI'])
             ? wp_unslash($_SERVER['REQUEST_URI'])
             : '/';
-        $matcher = new PathMatcher($settings['protected_paths'], $settings['excluded_paths']);
+        $matcher = new PathMatcher($settings->protectedPaths, $settings->excludedPaths);
 
         if (! $matcher->protects($requestUri)) {
             return;
@@ -52,13 +50,13 @@ final class Plugin
         }
 
         $validator = new ClaimsValidator(
-            $settings['issuer'],
-            $settings['audience'],
-            $settings['allowed_emails'],
+            $settings->issuer,
+            $settings->audience,
+            $settings->allowedEmails,
         );
         $verifier = new AccessTokenVerifier(
             $validator,
-            fn (bool $forceRefresh): array => $this->jwks($settings['issuer'], $forceRefresh),
+            fn (bool $forceRefresh): array => $this->jwks($settings->issuer, $forceRefresh),
         );
         $result = $verifier->verify($token);
 
@@ -67,23 +65,6 @@ final class Plugin
         }
     }
 
-    /**
-     * @param list<string> $links
-     * @return list<string>
-     */
-    public function settingsLink(array $links): array
-    {
-        array_unshift(
-            $links,
-            sprintf(
-                '<a href="%s">%s</a>',
-                esc_url(admin_url('options-general.php?page=diesis-wp-jwt-auth')),
-                esc_html__('Settings', 'diesis-wp-jwt-auth')
-            )
-        );
-
-        return $links;
-    }
 
     private function accessToken(): string
     {

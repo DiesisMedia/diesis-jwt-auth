@@ -9,20 +9,15 @@ use PHPUnit\Framework\TestCase;
 
 final class SettingsTest extends TestCase
 {
-    private Settings $settings;
 
-    protected function setUp(): void
-    {
-        $this->settings = new Settings();
-    }
 
     public function testAcceptsCloudflareIssuerAndEnablesEnforcement(): void
     {
-        $result = $this->settings->sanitize([
+        $result = Settings::sanitize([
             'enabled' => '1',
             'issuer' => 'https://team.cloudflareaccess.com/',
             'audience' => '  audience-tag  ',
-        ]);
+        ])->toArray();
 
         self::assertTrue($result['enabled']);
         self::assertSame('https://team.cloudflareaccess.com', $result['issuer']);
@@ -31,11 +26,11 @@ final class SettingsTest extends TestCase
 
     public function testRejectsNonCloudflareIssuerAndDisablesEnforcement(): void
     {
-        $result = $this->settings->sanitize([
+        $result = Settings::sanitize([
             'enabled' => '1',
             'issuer' => 'https://attacker.example',
             'audience' => 'audience-tag',
-        ]);
+        ])->toArray();
 
         self::assertSame('', $result['issuer']);
         self::assertFalse($result['enabled']);
@@ -43,68 +38,149 @@ final class SettingsTest extends TestCase
 
     public function testRejectsIssuerWithPath(): void
     {
-        $result = $this->settings->sanitize([
+        $result = Settings::sanitize([
             'issuer' => 'https://team.cloudflareaccess.com/extra',
-        ]);
+        ])->toArray();
 
         self::assertSame('', $result['issuer']);
     }
 
     public function testEnforcementNeedsIssuerAndAudience(): void
     {
-        $result = $this->settings->sanitize([
+        $result = Settings::sanitize([
             'enabled' => '1',
             'issuer' => 'https://team.cloudflareaccess.com',
             'audience' => '',
-        ]);
+        ])->toArray();
 
         self::assertFalse($result['enabled']);
     }
 
     public function testEnabledAcceptsBooleanTrueForProgrammaticUpdates(): void
     {
-        $result = $this->settings->sanitize([
+        $result = Settings::sanitize([
             'enabled' => true,
             'issuer' => 'https://team.cloudflareaccess.com',
             'audience' => 'audience-tag',
-        ]);
+        ])->toArray();
 
         self::assertTrue($result['enabled']);
     }
 
     public function testEmailsAreLowercasedDeduplicatedAndFiltered(): void
     {
-        $result = $this->settings->sanitize([
+        $result = Settings::sanitize([
             'allowed_emails' => "Admin@Example.com\nadmin@example.com\nnot-an-email\neditor@example.com",
-        ]);
+        ])->toArray();
 
         self::assertSame(['admin@example.com', 'editor@example.com'], $result['allowed_emails']);
     }
 
     public function testPathRulesRejectInvalidEntries(): void
     {
-        $result = $this->settings->sanitize([
+        $result = Settings::sanitize([
             'protected_paths' => "/wp-admin\nno-leading-slash\n/a/*/b\n/two**\n/valid/*",
-        ]);
+        ])->toArray();
 
         self::assertSame(['/wp-admin', '/valid/*'], $result['protected_paths']);
     }
 
     public function testProtectedPathsFallBackToDefaultsWhenEmpty(): void
     {
-        $result = $this->settings->sanitize([
+        $result = Settings::sanitize([
             'protected_paths' => '',
-        ]);
+        ])->toArray();
 
         self::assertSame(['/wp-login.php*', '/wp-admin', '/wp-admin/*'], $result['protected_paths']);
     }
 
     public function testExcludedPathsStayEmptyWhenEmpty(): void
     {
-        $result = $this->settings->sanitize([
+        $result = Settings::sanitize([
             'excluded_paths' => '',
-        ]);
+        ])->toArray();
 
         self::assertSame([], $result['excluded_paths']);
+    }
+
+    public function testStoredRowIsReadWithNormalizedValues(): void
+    {
+        $settings = Settings::fromStored([
+            'enabled' => true,
+            'issuer' => 'https://team.cloudflareaccess.com/',
+            'audience' => ' audience-tag ',
+            'allowed_emails' => ['Admin@Example.com'],
+            'protected_paths' => ['/wp-admin/*'],
+            'excluded_paths' => ['/wp-admin/admin-ajax.php'],
+        ]);
+
+        self::assertTrue($settings->enabled);
+        self::assertSame('https://team.cloudflareaccess.com', $settings->issuer);
+        self::assertSame('audience-tag', $settings->audience);
+        self::assertSame(['admin@example.com'], $settings->allowedEmails);
+        self::assertSame(['/wp-admin/*'], $settings->protectedPaths);
+        self::assertSame(['/wp-admin/admin-ajax.php'], $settings->excludedPaths);
+    }
+
+    public function testStoredLegacyStringFlagEnablesEnforcement(): void
+    {
+        $settings = Settings::fromStored([
+            'enabled' => '1',
+            'issuer' => 'https://team.cloudflareaccess.com',
+            'audience' => 'audience-tag',
+        ]);
+
+        self::assertTrue($settings->enabled);
+    }
+
+    public function testStoredNonCloudflareIssuerDisablesEnforcement(): void
+    {
+        $settings = Settings::fromStored([
+            'enabled' => true,
+            'issuer' => 'https://attacker.example',
+            'audience' => 'audience-tag',
+        ]);
+
+        self::assertFalse($settings->enabled);
+        self::assertSame('', $settings->issuer);
+    }
+
+    public function testStoredRowWithoutAudienceDisablesEnforcement(): void
+    {
+        $settings = Settings::fromStored([
+            'enabled' => true,
+            'issuer' => 'https://team.cloudflareaccess.com',
+        ]);
+
+        self::assertFalse($settings->enabled);
+    }
+
+    public function testMissingOptionYieldsDefaults(): void
+    {
+        $settings = Settings::fromStored(false);
+
+        self::assertFalse($settings->enabled);
+        self::assertSame('', $settings->issuer);
+        self::assertSame(['/wp-login.php*', '/wp-admin', '/wp-admin/*'], $settings->protectedPaths);
+        self::assertSame([], $settings->excludedPaths);
+    }
+
+    public function testStoredEmptyProtectedPathsFallBackToDefaults(): void
+    {
+        $settings = Settings::fromStored(['protected_paths' => []]);
+
+        self::assertSame(['/wp-login.php*', '/wp-admin', '/wp-admin/*'], $settings->protectedPaths);
+    }
+
+    public function testStoredArrayFormRoundTrips(): void
+    {
+        $stored = Settings::sanitize([
+            'enabled' => '1',
+            'issuer' => 'https://team.cloudflareaccess.com',
+            'audience' => 'audience-tag',
+            'allowed_emails' => "admin@example.com",
+        ])->toArray();
+
+        self::assertEquals($stored, Settings::fromStored($stored)->toArray());
     }
 }
