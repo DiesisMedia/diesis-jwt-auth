@@ -15,7 +15,8 @@ final class AccessTokenVerifier
     private readonly Closure $jwksProvider;
 
     /**
-     * @param callable(bool): array<string, mixed> $jwksProvider
+     * @param callable(bool): array<string, mixed> $jwksProvider receives true when
+     *   the cached set could not verify the token; may throw SigningKeysUnavailable
      */
     public function __construct(
         private readonly ClaimsValidator $claimsValidator,
@@ -25,10 +26,13 @@ final class AccessTokenVerifier
         $this->jwksProvider = Closure::fromCallable($jwksProvider);
     }
 
-    public function verify(string $token): ValidationResult
+    /**
+     * @return DenialReason|null null when the token is valid for this issuer and audience
+     */
+    public function verify(string $token): ?DenialReason
     {
         if (! $this->usesRs256($token)) {
-            return ValidationResult::deny('invalid_algorithm');
+            return DenialReason::InvalidAlgorithm;
         }
 
         $previousLeeway = JWT::$leeway;
@@ -38,13 +42,18 @@ final class AccessTokenVerifier
             foreach ([false, true] as $refreshKeys) {
                 try {
                     $jwks = ($this->jwksProvider)($refreshKeys);
+                } catch (SigningKeysUnavailable) {
+                    return DenialReason::KeysUnavailable;
+                }
+
+                try {
                     $keys = JWK::parseKeySet($jwks, 'RS256');
                     $claims = JWT::decode($token, $keys);
 
                     return $this->claimsValidator->validate($claims);
                 } catch (Throwable $exception) {
                     if ($refreshKeys) {
-                        return ValidationResult::deny('invalid_token');
+                        return DenialReason::InvalidToken;
                     }
                 }
             }
@@ -52,7 +61,7 @@ final class AccessTokenVerifier
             JWT::$leeway = $previousLeeway;
         }
 
-        return ValidationResult::deny('invalid_token');
+        return DenialReason::InvalidToken;
     }
 
     private function usesRs256(string $token): bool

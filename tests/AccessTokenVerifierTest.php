@@ -6,43 +6,19 @@ namespace Diesis\WpJwtAuth\Tests;
 
 use Diesis\WpJwtAuth\AccessTokenVerifier;
 use Diesis\WpJwtAuth\ClaimsValidator;
+use Diesis\WpJwtAuth\DenialReason;
+use Diesis\WpJwtAuth\SigningKeyCache;
+use Diesis\WpJwtAuth\SigningKeysUnavailable;
 use Firebase\JWT\JWT;
 use PHPUnit\Framework\TestCase;
 
 final class AccessTokenVerifierTest extends TestCase
 {
-    private string $privateKey;
-
-    /** @var array<string, mixed> */
-    private array $jwks;
+    private TestSigningKey $key;
 
     protected function setUp(): void
     {
-        $key = openssl_pkey_new([
-            'digest_alg' => 'sha256',
-            'private_key_bits' => 2048,
-            'private_key_type' => OPENSSL_KEYTYPE_RSA,
-        ]);
-
-        self::assertNotFalse($key);
-        $privateKey = '';
-        self::assertTrue(openssl_pkey_export($key, $privateKey));
-        $this->privateKey = $privateKey;
-
-        $details = openssl_pkey_get_details($key);
-        self::assertIsArray($details);
-        self::assertIsArray($details['rsa']);
-
-        $this->jwks = [
-            'keys' => [[
-                'kty' => 'RSA',
-                'use' => 'sig',
-                'alg' => 'RS256',
-                'kid' => 'test-key',
-                'n' => self::base64Url($details['rsa']['n']),
-                'e' => self::base64Url($details['rsa']['e']),
-            ]],
-        ];
+        $this->key = new TestSigningKey();
     }
 
     public function testVerifiesSignatureAndClaims(): void
@@ -55,9 +31,9 @@ final class AccessTokenVerifierTest extends TestCase
             'nbf' => time() - 5,
             'exp' => time() + 300,
             'email' => 'admin@example.com',
-        ], $this->privateKey, 'RS256', 'test-key');
+        ], $this->key->privateKey, 'RS256', 'test-key');
 
-        self::assertTrue($verifier->verify($token)->allowed);
+        self::assertNull($verifier->verify($token));
     }
 
     public function testRejectsTamperedToken(): void
@@ -69,11 +45,11 @@ final class AccessTokenVerifierTest extends TestCase
             'iat' => time() - 5,
             'exp' => time() + 300,
             'email' => 'admin@example.com',
-        ], $this->privateKey, 'RS256', 'test-key');
+        ], $this->key->privateKey, 'RS256', 'test-key');
         $segments = explode('.', $token);
-        $segments[1] = self::base64Url('{"email":"attacker@example.com"}');
+        $segments[1] = TestSigningKey::base64Url('{"email":"attacker@example.com"}');
 
-        self::assertFalse($verifier->verify(implode('.', $segments))->allowed);
+        self::assertSame(DenialReason::InvalidToken, $verifier->verify(implode('.', $segments)));
     }
 
     public function testRejectsNonRs256Token(): void
@@ -88,8 +64,7 @@ final class AccessTokenVerifierTest extends TestCase
 
         $result = $verifier->verify($token);
 
-        self::assertFalse($result->allowed);
-        self::assertSame('invalid_algorithm', $result->reason);
+        self::assertSame(DenialReason::InvalidAlgorithm, $result);
     }
 
     public function testRejectsExpiredToken(): void
@@ -100,9 +75,9 @@ final class AccessTokenVerifierTest extends TestCase
             'iat' => time() - 600,
             'exp' => time() - 300,
             'email' => 'admin@example.com',
-        ], $this->privateKey, 'RS256', 'test-key');
+        ], $this->key->privateKey, 'RS256', 'test-key');
 
-        self::assertFalse($this->verifier()->verify($token)->allowed);
+        self::assertSame(DenialReason::InvalidToken, $this->verifier()->verify($token));
     }
 
     public function testRefreshesKeysOnceWhenCachedSetCannotVerifyToken(): void
@@ -117,7 +92,7 @@ final class AccessTokenVerifierTest extends TestCase
             function (bool $forceRefresh) use (&$refreshAttempts): array {
                 $refreshAttempts[] = $forceRefresh;
 
-                return $forceRefresh ? $this->jwks : ['keys' => []];
+                return $forceRefresh ? $this->key->jwks : ['keys' => []];
             },
         );
         $token = JWT::encode([
@@ -126,10 +101,68 @@ final class AccessTokenVerifierTest extends TestCase
             'iat' => time() - 5,
             'exp' => time() + 300,
             'email' => 'admin@example.com',
-        ], $this->privateKey, 'RS256', 'test-key');
+        ], $this->key->privateKey, 'RS256', 'test-key');
 
-        self::assertTrue($verifier->verify($token)->allowed);
+        self::assertNull($verifier->verify($token));
         self::assertSame([false, true], $refreshAttempts);
+    }
+
+    public function testRotatedKeyIsPickedUpThroughTheRealCache(): void
+    {
+        $store = new InMemoryTransientStore();
+        $rotatedOut = new TestSigningKey();
+        $fetches = 0;
+        $cache = function (int $now) use ($store, $rotatedOut, &$fetches): SigningKeyCache {
+            return new SigningKeyCache(
+                'https://team.cloudflareaccess.com',
+                $store,
+                function () use ($rotatedOut, &$fetches): array {
+                    $fetches++;
+
+                    return $fetches === 1 ? $rotatedOut->jwks : $this->key->jwks;
+                },
+                static fn (): int => $now,
+            );
+        };
+        $cache(time() - 3600)->keys(false);
+        $verifier = new AccessTokenVerifier(
+            new ClaimsValidator('https://team.cloudflareaccess.com', 'expected-audience'),
+            $cache(time())->keys(...),
+        );
+        $token = $this->key->sign([
+            'iss' => 'https://team.cloudflareaccess.com',
+            'aud' => ['expected-audience'],
+            'iat' => time() - 5,
+            'exp' => time() + 300,
+            'email' => 'admin@example.com',
+        ]);
+
+        self::assertNull($verifier->verify($token));
+        self::assertSame(2, $fetches);
+    }
+
+    public function testDeniesWithItsOwnReasonWhenSigningKeysAreUnavailable(): void
+    {
+        $attempts = 0;
+        $verifier = new AccessTokenVerifier(
+            new ClaimsValidator('https://team.cloudflareaccess.com', 'expected-audience'),
+            function (bool $forceRefresh) use (&$attempts): array {
+                $attempts++;
+
+                throw new SigningKeysUnavailable('offline');
+            },
+        );
+        $token = JWT::encode([
+            'iss' => 'https://team.cloudflareaccess.com',
+            'aud' => ['expected-audience'],
+            'exp' => time() + 300,
+            'email' => 'admin@example.com',
+        ], $this->key->privateKey, 'RS256', 'test-key');
+
+        $result = $verifier->verify($token);
+
+        self::assertSame(DenialReason::KeysUnavailable, $result);
+        self::assertSame(1, $attempts);
     }
 
     private function verifier(): AccessTokenVerifier
@@ -140,12 +173,7 @@ final class AccessTokenVerifierTest extends TestCase
                 'expected-audience',
                 ['admin@example.com'],
             ),
-            fn (bool $forceRefresh): array => $this->jwks,
+            fn (bool $forceRefresh): array => $this->key->jwks,
         );
-    }
-
-    private static function base64Url(string $value): string
-    {
-        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
     }
 }

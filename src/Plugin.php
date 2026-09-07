@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Diesis\WpJwtAuth;
 
-use RuntimeException;
-
+/**
+ * WordPress adapter: reads the request, asks Enforcement, and ends the request
+ * with a 403 when it is denied. Runs early on init so nothing later on the
+ * hook sees an unauthenticated request to a protected path.
+ */
 final class Plugin
 {
-    private const JWKS_CACHE_KEY = 'diesis_wp_jwt_auth_jwks';
-    private const JWKS_REFRESH_KEY = 'diesis_wp_jwt_auth_jwks_refreshed';
-    private const MINUTE = 60;
-    private const HOUR = 3600;
-    private const DAY = 86400;
-
     private function __construct()
     {
     }
@@ -21,68 +18,30 @@ final class Plugin
     public static function boot(string $pluginFile): void
     {
         $plugin = new self();
-        $settings = new Settings();
-        $settings->register();
+        (new SettingsPage())->register($pluginFile);
 
         add_action('init', [$plugin, 'enforce'], -100);
-        add_filter('plugin_action_links_' . plugin_basename($pluginFile), [$plugin, 'settingsLink']);
     }
 
     public function enforce(): void
     {
-        $settings = Settings::get();
-
-        if (! $settings['enabled']) {
-            return;
-        }
-
-        $requestUri = isset($_SERVER['REQUEST_URI']) && is_string($_SERVER['REQUEST_URI'])
-            ? wp_unslash($_SERVER['REQUEST_URI'])
-            : '/';
-        $matcher = new PathMatcher($settings['protected_paths'], $settings['excluded_paths']);
-
-        if (! $matcher->protects($requestUri)) {
-            return;
-        }
-
-        $token = $this->accessToken();
-
-        if ($token === '') {
-            $this->deny('token_missing');
-        }
-
-        $validator = new ClaimsValidator(
-            $settings['issuer'],
-            $settings['audience'],
-            $settings['allowed_emails'],
+        $settings = Settings::parse(get_option(Settings::OPTION, []));
+        $enforcement = new Enforcement(
+            $settings,
+            static fn (bool $forceRefresh): array => SigningKeyCache::forWordPress($settings->issuer)->keys($forceRefresh),
         );
-        $verifier = new AccessTokenVerifier(
-            $validator,
-            fn (bool $forceRefresh): array => $this->jwks($settings['issuer'], $forceRefresh),
-        );
-        $result = $verifier->verify($token);
+        $denial = $enforcement->decide($this->requestUri(), $this->accessToken());
 
-        if (! $result->allowed) {
-            $this->deny($result->reason);
+        if ($denial !== null) {
+            $this->deny($denial);
         }
     }
 
-    /**
-     * @param list<string> $links
-     * @return list<string>
-     */
-    public function settingsLink(array $links): array
+    private function requestUri(): string
     {
-        array_unshift(
-            $links,
-            sprintf(
-                '<a href="%s">%s</a>',
-                esc_url(admin_url('options-general.php?page=diesis-wp-jwt-auth')),
-                esc_html__('Settings', 'diesis-wp-jwt-auth')
-            )
-        );
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
 
-        return $links;
+        return is_string($requestUri) ? wp_unslash($requestUri) : '/';
     }
 
     private function accessToken(): string
@@ -92,91 +51,10 @@ final class Plugin
         return is_string($token) ? trim(wp_unslash($token)) : '';
     }
 
-    /**
-     * The two network-wide site transient names that cache the JWKS for an
-     * issuer. Centralized so that uninstall cleanup deletes exactly what
-     * jwks() writes.
-     *
-     * @return array{0: string, 1: string} the key set and refresh-marker names
-     */
-    public static function jwksCacheKeys(string $issuer): array
-    {
-        $issuerHash = substr(hash('sha256', rtrim($issuer, '/')), 0, 16);
-
-        return [
-            self::JWKS_CACHE_KEY . '_' . $issuerHash,
-            self::JWKS_REFRESH_KEY . '_' . $issuerHash,
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function jwks(string $issuer, bool $forceRefresh): array
-    {
-        [$cacheKey, $refreshKey] = self::jwksCacheKeys($issuer);
-        $cached = self::normalizeJwks(get_site_transient($cacheKey));
-
-        if (! $forceRefresh && $cached !== null) {
-            return $cached;
-        }
-
-        $lastRefresh = get_site_transient($refreshKey);
-
-        if ($forceRefresh && is_int($lastRefresh) && $lastRefresh > time() - (5 * self::MINUTE) && $cached !== null) {
-            return $cached;
-        }
-
-        $response = wp_safe_remote_get(
-            rtrim($issuer, '/') . '/cdn-cgi/access/certs',
-            [
-                'timeout' => 5,
-                'redirection' => 0,
-                'headers' => ['Accept' => 'application/json'],
-            ]
-        );
-
-        set_site_transient($refreshKey, time(), self::DAY);
-
-        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
-            if ($cached !== null) {
-                return $cached;
-            }
-
-            throw new RuntimeException('Unable to retrieve Cloudflare Access signing keys.');
-        }
-
-        $decoded = self::normalizeJwks(json_decode(wp_remote_retrieve_body($response), true));
-
-        if ($decoded === null) {
-            if ($cached !== null) {
-                return $cached;
-            }
-
-            throw new RuntimeException('Cloudflare Access returned an invalid key set.');
-        }
-
-        set_site_transient($cacheKey, $decoded, 12 * self::HOUR);
-
-        return $decoded;
-    }
-
-    /**
-     * @return array<string, mixed>|null
-     */
-    private static function normalizeJwks(mixed $value): ?array
-    {
-        if (! is_array($value) || ! isset($value['keys']) || ! is_array($value['keys']) || $value['keys'] === []) {
-            return null;
-        }
-
-        return ['keys' => array_values($value['keys'])];
-    }
-
-    private function deny(string $reason): never
+    private function deny(DenialReason $reason): never
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('Diesis Cloudflare Access JWT denied a request: ' . sanitize_key($reason));
+            error_log('Diesis Cloudflare Access JWT denied a request: ' . $reason->value);
         }
 
         nocache_headers();
