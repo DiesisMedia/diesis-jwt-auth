@@ -28,6 +28,7 @@ rsync -a \
   --exclude '.github' \
   --exclude '.gitignore' \
   --exclude '.phpunit.cache' \
+  --exclude '.wordpress-org' \
   --exclude 'bin/build-release.sh' \
   --exclude 'dist' \
   --exclude 'phpcs.xml.dist' \
