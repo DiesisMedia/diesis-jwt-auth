@@ -5,7 +5,7 @@
          cacheDirectory=".phpunit.cache"
          colors="true">
     <testsuites>
-        <testsuite name="Diesis Cloudflare Access JWT Auth">
+        <testsuite name="DIESIS JWT Auth for Cloudflare Access">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Uninstall cleanup for Diesis Cloudflare Access JWT Auth.
+ * Uninstall cleanup for DIESIS JWT Auth for Cloudflare Access.
  *
  * Removes the plugin option from every site and purges the network-wide
  * cached Cloudflare Access signing keys for every issuer that was configured.

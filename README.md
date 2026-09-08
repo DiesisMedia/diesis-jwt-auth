@@ -1,4 +1,4 @@
-# Diesis Cloudflare Access JWT Auth
+# DIESIS JWT Auth for Cloudflare Access
 
 WordPress validates Cloudflare Access at the origin for selected paths. This closes the direct-origin bypass that remains when Access is used without Cloudflare Tunnel.
 

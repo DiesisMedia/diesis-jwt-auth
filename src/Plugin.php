@@ -54,7 +54,7 @@ final class Plugin
     private function deny(DenialReason $reason): never
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('Diesis Cloudflare Access JWT denied a request: ' . $reason->value);
+            error_log('DIESIS JWT Auth for Cloudflare Access denied a request: ' . $reason->value);
         }
 
         nocache_headers();
