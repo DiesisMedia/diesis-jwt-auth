@@ -43,7 +43,7 @@ Source code, issues and support: [github.com/flowsworld/diesis-wp-jwt-auth](http
 
 1. Create a self-hosted application in Cloudflare Zero Trust that covers your WordPress login and admin paths, and note the team domain (the issuer) and the application audience tag.
 2. Install the plugin from the WordPress plugin directory or upload the ZIP under Plugins > Add New Plugin > Upload Plugin, then activate it.
-3. Open Settings > Cloudflare Access JWT.
+3. Open Settings > DIESIS JWT Auth.
 4. Enter the issuer, for example `https://your-team.cloudflareaccess.com`, and the application audience. Save with enforcement still disabled.
 5. Check that the protected paths match the paths your Access application covers. The defaults protect `/wp-login.php` and `/wp-admin`.
 6. Enable enforcement and save.

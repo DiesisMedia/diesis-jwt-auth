@@ -36,8 +36,8 @@ final class SettingsPage
     public function addSettingsPage(): void
     {
         add_options_page(
-            __('Cloudflare Access JWT', 'diesis-wp-jwt-auth'),
-            __('Cloudflare Access JWT', 'diesis-wp-jwt-auth'),
+            __('DIESIS JWT Auth for Cloudflare Access', 'diesis-wp-jwt-auth'),
+            __('DIESIS JWT Auth', 'diesis-wp-jwt-auth'),
             'manage_options',
             self::SLUG,
             [$this, 'render']
@@ -90,7 +90,7 @@ final class SettingsPage
         $option = Settings::OPTION;
         ?>
         <div class="wrap">
-            <h1><?php echo esc_html__('Cloudflare Access JWT', 'diesis-wp-jwt-auth'); ?></h1>
+            <h1><?php echo esc_html__('DIESIS JWT Auth for Cloudflare Access', 'diesis-wp-jwt-auth'); ?></h1>
             <p><?php echo esc_html__('Validates Cloudflare Access at the WordPress origin. This plugin does not replace the WordPress login.', 'diesis-wp-jwt-auth'); ?></p>
             <?php settings_errors($option); ?>
             <form action="options.php" method="post">
