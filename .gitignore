@@ -1,3 +1,5 @@
 /vendor/
+/vendor-prefixed/
+/bin/strauss.phar
 /.phpunit.cache/
 /dist/

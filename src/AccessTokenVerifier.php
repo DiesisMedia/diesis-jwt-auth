@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Diesis\WpJwtAuth;
 
 use Closure;
-use Firebase\JWT\JWK;
-use Firebase\JWT\JWT;
+use Diesis\WpJwtAuth\Vendor\Firebase\JWT\JWK;
+use Diesis\WpJwtAuth\Vendor\Firebase\JWT\JWT;
 use JsonException;
 use Throwable;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Diesis\WpJwtAuth\Tests;
 
-use Firebase\JWT\JWT;
+use Diesis\WpJwtAuth\Vendor\Firebase\JWT\JWT;
 use PHPUnit\Framework\Assert;
 
 /**

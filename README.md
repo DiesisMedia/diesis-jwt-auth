@@ -81,6 +81,8 @@ composer lint
 bin/build-release.sh 1.1.0
 ```
 
+`composer install` also runs [Strauss](https://github.com/BrianHenryIE/strauss) through `bin/strauss.sh`, which copies `firebase/php-jwt` into `vendor-prefixed/` under the `Diesis\WpJwtAuth\Vendor\` namespace and removes the unprefixed copy. Another plugin bundling a different version of the library can therefore not replace ours. The script downloads a pinned `strauss.phar` on first use and verifies its checksum; both `vendor-prefixed/` and the phar are ignored by git.
+
 ## License
 
 GPL-2.0-or-later

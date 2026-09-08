@@ -5,6 +5,7 @@
     <file>uninstall.php</file>
     <file>src</file>
     <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>vendor-prefixed/*</exclude-pattern>
     <arg name="basepath" value="."/>
     <arg name="colors"/>
     <arg value="sp"/>
