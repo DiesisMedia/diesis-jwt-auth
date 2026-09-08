@@ -4,6 +4,8 @@ WordPress validates Cloudflare Access at the origin for selected paths. This clo
 
 The plugin does not replace the WordPress login and does not create users. A visitor must first pass Cloudflare Access and then authenticate to WordPress normally.
 
+The user-facing description, installation steps, FAQ and changelog live in [`readme.txt`](readme.txt), the WordPress plugin directory listing. This file covers configuration details and development.
+
 ## Requirements
 
 - WordPress 6.8 or newer
@@ -13,13 +15,7 @@ The plugin does not replace the WordPress login and does not create users. A vis
 
 ## Installation
 
-1. Download `diesis-wp-jwt-auth-<version>.zip` from the latest GitHub release.
-2. In WordPress, open **Plugins > Add New Plugin > Upload Plugin**.
-3. Upload the ZIP and activate the plugin.
-4. Open **Settings > Cloudflare Access JWT**.
-5. Enter the issuer and application audience, then save while enforcement is disabled.
-6. Confirm that the protected paths match the Cloudflare Access application.
-7. Enable enforcement and test both the Cloudflare URL and a direct-origin request.
+Install from the WordPress plugin directory, or download `diesis-wp-jwt-auth-<version>.zip` from the latest GitHub release and upload it under **Plugins > Add New Plugin > Upload Plugin**. The step-by-step setup is in `readme.txt`.
 
 ## Configuration
 
