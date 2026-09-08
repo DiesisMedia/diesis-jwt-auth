@@ -28,21 +28,40 @@ rsync -a \
   --exclude '.github' \
   --exclude '.gitignore' \
   --exclude '.phpunit.cache' \
-  --exclude 'bin' \
+  --exclude 'bin/build-release.sh' \
   --exclude 'dist' \
   --exclude 'phpcs.xml.dist' \
   --exclude 'phpstan.neon' \
   --exclude 'phpunit.xml.dist' \
   --exclude 'tests' \
   --exclude 'vendor' \
+  --exclude 'vendor-prefixed' \
   "$repo_root/" "$package_root/"
 
+# Composer's post-install hook runs bin/strauss.sh, which prefixes
+# firebase/php-jwt into vendor-prefixed/ and removes the unprefixed copy.
 composer install \
   --working-dir="$package_root" \
   --no-dev \
-  --classmap-authoritative \
   --no-interaction \
   --no-progress
+
+composer dump-autoload \
+  --working-dir="$package_root" \
+  --no-dev \
+  --classmap-authoritative
+
+# Build tooling and the development-only alias map do not ship.
+rm -rf "$package_root/bin"
+rm -f "$package_root/vendor/composer/autoload_aliases.php"
+
+if grep -rq "^namespace Firebase" "$package_root/vendor" "$package_root/vendor-prefixed"; then
+  echo "Unprefixed Firebase\\JWT namespace found in the package." >&2
+  exit 1
+fi
+
+# zip appends to an existing archive, so start from a clean file.
+rm -f "$artifact"
 
 (
   cd "$temporary_root"

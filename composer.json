@@ -34,6 +34,30 @@
     "scripts": {
         "analyse": "phpstan analyse --memory-limit=1G",
         "lint": "phpcs",
-        "test": "phpunit"
+        "test": "phpunit",
+        "prefix-namespaces": [
+            "bin/strauss.sh",
+            "@composer dump-autoload"
+        ],
+        "post-install-cmd": [
+            "@prefix-namespaces"
+        ],
+        "post-update-cmd": [
+            "@prefix-namespaces"
+        ],
+        "post-autoload-dump": [
+            "bin/strauss.sh include-autoloader"
+        ]
+    },
+    "extra": {
+        "strauss": {
+            "target_directory": "vendor-prefixed",
+            "namespace_prefix": "Diesis\\WpJwtAuth\\Vendor\\",
+            "classmap_prefix": "Diesis_WpJwtAuth_Vendor_",
+            "packages": [
+                "firebase/php-jwt"
+            ],
+            "delete_vendor_packages": true
+        }
     }
 }

@@ -9,7 +9,7 @@ use Diesis\WpJwtAuth\ClaimsValidator;
 use Diesis\WpJwtAuth\DenialReason;
 use Diesis\WpJwtAuth\SigningKeyCache;
 use Diesis\WpJwtAuth\SigningKeysUnavailable;
-use Firebase\JWT\JWT;
+use Diesis\WpJwtAuth\Vendor\Firebase\JWT\JWT;
 use PHPUnit\Framework\TestCase;
 
 final class AccessTokenVerifierTest extends TestCase
