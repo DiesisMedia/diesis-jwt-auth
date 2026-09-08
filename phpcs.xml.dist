@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Diesis Cloudflare Access JWT Auth">
-    <description>Coding standards for Diesis Cloudflare Access JWT Auth.</description>
+<ruleset name="DIESIS JWT Auth for Cloudflare Access">
+    <description>Coding standards for DIESIS JWT Auth for Cloudflare Access.</description>
     <file>diesis-wp-jwt-auth.php</file>
     <file>uninstall.php</file>
     <file>src</file>
