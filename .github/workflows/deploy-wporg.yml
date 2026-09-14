@@ -1,0 +1,57 @@
+name: Deploy to WordPress.org
+
+# Runs when a release tag (v1.2.0) is pushed. Builds the same ZIP as CI and
+# hands its contents to the WordPress.org SVN deploy action.
+#
+# Two switches keep this safe before the plugin is approved:
+# - The deploy step is skipped while the SVN_USERNAME secret is absent
+#   (the action refuses to run without it, and the SVN repo does not exist yet).
+# - Until the repository variable WPORG_DEPLOY_DRY_RUN is "false", the action
+#   prepares the SVN working copy and skips the commit.
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer:v2
+      - id: version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          header="$(sed -n 's/^ \* Version: //p' diesis-wp-jwt-auth.php)"
+          stable="$(sed -n 's/^Stable tag: //p' readme.txt)"
+          if [[ "$tag" != "$header" || "$tag" != "$stable" ]]; then
+            echo "Tag $tag, plugin header $header and readme Stable tag $stable must match." >&2
+            exit 1
+          fi
+          echo "value=$tag" >> "$GITHUB_OUTPUT"
+      - run: chmod +x bin/build-release.sh bin/strauss.sh
+      - run: bin/build-release.sh "${{ steps.version.outputs.value }}"
+      # The action deploys a directory, so unpack the reviewed ZIP rather than rebuilding.
+      - run: unzip -q "dist/diesis-wp-jwt-auth-${{ steps.version.outputs.value }}.zip" -d build
+      - if: env.SVN_USERNAME == ''
+        run: echo "SVN_USERNAME secret not set; built the release but skipped the WordPress.org deploy."
+      - if: env.SVN_USERNAME != ''
+        uses: 10up/action-wordpress-plugin-deploy@2.3.0
+        with:
+          dry-run: ${{ vars.WPORG_DEPLOY_DRY_RUN != 'false' }}
+        env:
+          SLUG: diesis-wp-jwt-auth
+          VERSION: ${{ steps.version.outputs.value }}
+          BUILD_DIR: build/diesis-wp-jwt-auth
+          ASSETS_DIR: .wordpress-org
