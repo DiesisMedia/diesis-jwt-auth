@@ -4,7 +4,7 @@
 
 ### Issue tracker
 
-Issues are tracked in this repo's GitHub Issues (github.com/flowsworld/diesis-wp-jwt-auth) via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+Issues are tracked in this repo's GitHub Issues (github.com/DiesisMedia/diesis-wp-jwt-auth) via the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
 ### Domain docs
 
