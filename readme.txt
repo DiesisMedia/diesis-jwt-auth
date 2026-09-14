@@ -1,5 +1,5 @@
 === DIESIS JWT Auth for Cloudflare Access ===
-Contributors: flownex
+Contributors: diesismedia
 Tags: cloudflare, access, jwt, authentication, security
 Requires at least: 6.8
 Tested up to: 7.1
