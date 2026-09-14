@@ -37,23 +37,34 @@ final class Plugin
         }
     }
 
+    /**
+     * The raw request target. It is only compared against the configured
+     * path patterns, never stored or output, and PathMatcher normalizes it
+     * itself so that encoding tricks cannot dodge a protected pattern.
+     */
     private function requestUri(): string
     {
-        $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+        if (! isset($_SERVER['REQUEST_URI']) || ! is_string($_SERVER['REQUEST_URI'])) {
+            return '/';
+        }
 
-        return is_string($requestUri) ? wp_unslash($requestUri) : '/';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- compared only, see above.
+        return wp_unslash($_SERVER['REQUEST_URI']);
     }
 
     private function accessToken(): string
     {
-        $token = $_SERVER['HTTP_CF_ACCESS_JWT_ASSERTION'] ?? '';
+        if (! isset($_SERVER['HTTP_CF_ACCESS_JWT_ASSERTION']) || ! is_string($_SERVER['HTTP_CF_ACCESS_JWT_ASSERTION'])) {
+            return '';
+        }
 
-        return is_string($token) ? trim(wp_unslash($token)) : '';
+        return sanitize_text_field(wp_unslash($_SERVER['HTTP_CF_ACCESS_JWT_ASSERTION']));
     }
 
     private function deny(DenialReason $reason): never
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- only with WP_DEBUG on.
             error_log('DIESIS JWT Auth for Cloudflare Access denied a request: ' . $reason->value);
         }
 

@@ -23,21 +23,11 @@ artifact="$repo_root/dist/diesis-wp-jwt-auth-$version.zip"
 
 mkdir -p "$package_root" "$repo_root/dist"
 
-rsync -a \
-  --exclude '.git' \
-  --exclude '.github' \
-  --exclude '.gitignore' \
-  --exclude '.phpunit.cache' \
-  --exclude '.wordpress-org' \
-  --exclude 'bin/build-release.sh' \
-  --exclude 'dist' \
-  --exclude 'phpcs.xml.dist' \
-  --exclude 'phpstan.neon' \
-  --exclude 'phpunit.xml.dist' \
-  --exclude 'tests' \
-  --exclude 'vendor' \
-  --exclude 'vendor-prefixed' \
-  "$repo_root/" "$package_root/"
+# Only files git tracks go in, so local scratch files never ship. Agent docs
+# and development tooling are tracked but stay out of the package.
+git -C "$repo_root" ls-files -z \
+  | grep -zvE '^(\.github/|\.gitignore$|\.wordpress-org/|AGENTS\.md$|bin/build-release\.sh$|docs/|phpcs\.xml\.dist$|phpstan\.neon$|phpunit\.xml\.dist$|tests/)' \
+  | rsync -a --files-from=- --from0 "$repo_root/" "$package_root/"
 
 # Composer's post-install hook runs bin/strauss.sh, which prefixes
 # firebase/php-jwt into vendor-prefixed/ and removes the unprefixed copy.
