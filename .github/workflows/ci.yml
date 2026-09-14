@@ -29,6 +29,9 @@ jobs:
   package:
     runs-on: ubuntu-latest
     needs: quality
+    permissions:
+      contents: read
+      pull-requests: write # Plugin Check posts its findings on the PR.
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -45,3 +48,12 @@ jobs:
         with:
           name: diesis-wp-jwt-auth-${{ steps.version.outputs.value }}
           path: dist/diesis-wp-jwt-auth-${{ steps.version.outputs.value }}.zip
+      # Plugin Check runs against the unpacked ZIP, so it sees exactly what
+      # WordPress.org gets. The slug warning about "wp" is allowed by the
+      # directory and expected.
+      - run: unzip -q dist/diesis-wp-jwt-auth-${{ steps.version.outputs.value }}.zip -d dist/unpacked
+      - uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: dist/unpacked/diesis-wp-jwt-auth
+          strict: true
+          ignore-codes: trademarked_term

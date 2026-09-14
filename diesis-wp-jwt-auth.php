@@ -22,9 +22,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-$autoload = __DIR__ . '/vendor/autoload.php';
-
-if (! is_readable($autoload)) {
+if (! is_readable(__DIR__ . '/vendor/autoload.php')) {
     add_action(
         'admin_notices',
         static function (): void {
@@ -37,6 +35,6 @@ if (! is_readable($autoload)) {
     return;
 }
 
-require $autoload;
+require __DIR__ . '/vendor/autoload.php';
 
 Plugin::boot(__FILE__);
