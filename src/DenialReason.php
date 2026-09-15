@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth;
+namespace Diesis\JwtAuth;
 
 /**
  * Every way a request to a protected path can be denied. The string value is

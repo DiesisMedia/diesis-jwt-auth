@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth\Tests;
+namespace Diesis\JwtAuth\Tests;
 
-use Diesis\WpJwtAuth\Settings;
-use Diesis\WpJwtAuth\SettingsProblem;
+use Diesis\JwtAuth\Settings;
+use Diesis\JwtAuth\SettingsProblem;
 use PHPUnit\Framework\TestCase;
 
 final class SettingsTest extends TestCase

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth;
+namespace Diesis\JwtAuth;
 
 /**
  * The plugin's configuration as an immutable value.
@@ -16,7 +16,7 @@ namespace Diesis\WpJwtAuth;
  */
 final class Settings
 {
-    public const OPTION = 'diesis_wp_jwt_auth';
+    public const OPTION = 'diesis_jwt_auth';
 
     private const DEFAULT_PROTECTED_PATHS = ['/wp-login.php*', '/wp-admin', '/wp-admin/*'];
 

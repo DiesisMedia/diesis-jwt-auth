@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth;
+namespace Diesis\JwtAuth;
 
 use Closure;
-use Diesis\WpJwtAuth\Vendor\Firebase\JWT\JWK;
-use Diesis\WpJwtAuth\Vendor\Firebase\JWT\JWT;
+use Diesis\JwtAuth\Vendor\Firebase\JWT\JWK;
+use Diesis\JwtAuth\Vendor\Firebase\JWT\JWT;
 use JsonException;
 use Throwable;
 

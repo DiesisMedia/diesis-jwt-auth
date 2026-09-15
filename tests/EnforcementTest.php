@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth\Tests;
+namespace Diesis\JwtAuth\Tests;
 
-use Diesis\WpJwtAuth\DenialReason;
-use Diesis\WpJwtAuth\Enforcement;
-use Diesis\WpJwtAuth\Settings;
+use Diesis\JwtAuth\DenialReason;
+use Diesis\JwtAuth\Enforcement;
+use Diesis\JwtAuth\Settings;
 use PHPUnit\Framework\TestCase;
 
 final class EnforcementTest extends TestCase

@@ -15,7 +15,7 @@ The user-facing description, installation steps, FAQ and changelog live in [`rea
 
 ## Installation
 
-Install from the WordPress plugin directory, or download `diesis-wp-jwt-auth-<version>.zip` from the latest GitHub release and upload it under **Plugins > Add New Plugin > Upload Plugin**. The step-by-step setup is in `readme.txt`.
+Install from the WordPress plugin directory, or download `diesis-jwt-auth-<version>.zip` from the latest GitHub release and upload it under **Plugins > Add New Plugin > Upload Plugin**. The step-by-step setup is in `readme.txt`.
 
 ## Configuration
 
@@ -77,7 +77,7 @@ composer lint
 bin/build-release.sh 1.2.0
 ```
 
-`composer install` also runs [Strauss](https://github.com/BrianHenryIE/strauss) through `bin/strauss.sh`, which copies `firebase/php-jwt` into `vendor-prefixed/` under the `Diesis\WpJwtAuth\Vendor\` namespace and removes the unprefixed copy. Another plugin bundling a different version of the library can therefore not replace ours. The script downloads a pinned `strauss.phar` on first use and verifies its checksum; both `vendor-prefixed/` and the phar are ignored by git.
+`composer install` also runs [Strauss](https://github.com/BrianHenryIE/strauss) through `bin/strauss.sh`, which copies `firebase/php-jwt` into `vendor-prefixed/` under the `Diesis\JwtAuth\Vendor\` namespace and removes the unprefixed copy. Another plugin bundling a different version of the library can therefore not replace ours. The script downloads a pinned `strauss.phar` on first use and verifies its checksum; both `vendor-prefixed/` and the phar are ignored by git.
 
 ## License
 

@@ -33,7 +33,7 @@ jobs:
       - id: version
         run: |
           tag="${GITHUB_REF_NAME#v}"
-          header="$(sed -n 's/^ \* Version: //p' diesis-wp-jwt-auth.php)"
+          header="$(sed -n 's/^ \* Version: //p' diesis-jwt-auth.php)"
           stable="$(sed -n 's/^Stable tag: //p' readme.txt)"
           if [[ "$tag" != "$header" || "$tag" != "$stable" ]]; then
             echo "Tag $tag, plugin header $header and readme Stable tag $stable must match." >&2
@@ -43,7 +43,7 @@ jobs:
       - run: chmod +x bin/build-release.sh bin/strauss.sh
       - run: bin/build-release.sh "${{ steps.version.outputs.value }}"
       # The action deploys a directory, so unpack the reviewed ZIP rather than rebuilding.
-      - run: unzip -q "dist/diesis-wp-jwt-auth-${{ steps.version.outputs.value }}.zip" -d build
+      - run: unzip -q "dist/diesis-jwt-auth-${{ steps.version.outputs.value }}.zip" -d build
       - if: env.SVN_USERNAME == ''
         run: echo "SVN_USERNAME secret not set; built the release but skipped the WordPress.org deploy."
       - if: env.SVN_USERNAME != ''
@@ -51,7 +51,7 @@ jobs:
         with:
           dry-run: ${{ vars.WPORG_DEPLOY_DRY_RUN != 'false' }}
         env:
-          SLUG: diesis-wp-jwt-auth
+          SLUG: diesis-jwt-auth
           VERSION: ${{ steps.version.outputs.value }}
-          BUILD_DIR: build/diesis-wp-jwt-auth
+          BUILD_DIR: build/diesis-jwt-auth
           ASSETS_DIR: .wordpress-org

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth\Tests;
+namespace Diesis\JwtAuth\Tests;
 
-use Diesis\WpJwtAuth\AccessTokenVerifier;
-use Diesis\WpJwtAuth\ClaimsValidator;
-use Diesis\WpJwtAuth\DenialReason;
-use Diesis\WpJwtAuth\SigningKeyCache;
-use Diesis\WpJwtAuth\SigningKeysUnavailable;
-use Diesis\WpJwtAuth\Vendor\Firebase\JWT\JWT;
+use Diesis\JwtAuth\AccessTokenVerifier;
+use Diesis\JwtAuth\ClaimsValidator;
+use Diesis\JwtAuth\DenialReason;
+use Diesis\JwtAuth\SigningKeyCache;
+use Diesis\JwtAuth\SigningKeysUnavailable;
+use Diesis\JwtAuth\Vendor\Firebase\JWT\JWT;
 use PHPUnit\Framework\TestCase;
 
 final class AccessTokenVerifierTest extends TestCase

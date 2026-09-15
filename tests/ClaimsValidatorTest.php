@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth\Tests;
+namespace Diesis\JwtAuth\Tests;
 
-use Diesis\WpJwtAuth\ClaimsValidator;
-use Diesis\WpJwtAuth\DenialReason;
+use Diesis\JwtAuth\ClaimsValidator;
+use Diesis\JwtAuth\DenialReason;
 use PHPUnit\Framework\TestCase;
 
 final class ClaimsValidatorTest extends TestCase

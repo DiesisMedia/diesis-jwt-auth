@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth;
+namespace Diesis\JwtAuth;
 
 /**
  * WordPress adapter: reads the request, asks Enforcement, and ends the request
@@ -70,8 +70,8 @@ final class Plugin
 
         nocache_headers();
         wp_die(
-            esc_html__('Access denied.', 'diesis-wp-jwt-auth'),
-            esc_html__('Cloudflare Access authentication required', 'diesis-wp-jwt-auth'),
+            esc_html__('Access denied.', 'diesis-jwt-auth'),
+            esc_html__('Cloudflare Access authentication required', 'diesis-jwt-auth'),
             ['response' => 403]
         );
     }
