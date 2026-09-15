@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: DIESIS JWT Auth for Cloudflare Access
- * Plugin URI: https://github.com/DiesisMedia/diesis-wp-jwt-auth
+ * Plugin URI: https://github.com/DiesisMedia/diesis-jwt-auth
  * Description: Validates Cloudflare Access JWTs at the WordPress origin for selected paths.
  * Version: 1.2.0
  * Requires at least: 6.8
@@ -11,12 +11,12 @@
  * Author URI: https://diesis.media
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: diesis-wp-jwt-auth
+ * Text Domain: diesis-jwt-auth
  */
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth;
+namespace Diesis\JwtAuth;
 
 if (! defined('ABSPATH')) {
     exit;
@@ -27,7 +27,7 @@ if (! is_readable(__DIR__ . '/vendor/autoload.php')) {
         'admin_notices',
         static function (): void {
             echo '<div class="notice notice-error"><p>';
-            echo esc_html__('DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies.', 'diesis-wp-jwt-auth');
+            echo esc_html__('DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies.', 'diesis-jwt-auth');
             echo '</p></div>';
         }
     );

@@ -10,7 +10,7 @@ if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   exit 1
 fi
 
-plugin_version=$(sed -n 's/^ \* Version: //p' "$repo_root/diesis-wp-jwt-auth.php")
+plugin_version=$(sed -n 's/^ \* Version: //p' "$repo_root/diesis-jwt-auth.php")
 
 if [[ "$plugin_version" != "$version" ]]; then
   echo "Plugin version $plugin_version does not match requested version $version." >&2
@@ -18,8 +18,8 @@ if [[ "$plugin_version" != "$version" ]]; then
 fi
 
 temporary_root=$(mktemp -d)
-package_root="$temporary_root/diesis-wp-jwt-auth"
-artifact="$repo_root/dist/diesis-wp-jwt-auth-$version.zip"
+package_root="$temporary_root/diesis-jwt-auth"
+artifact="$repo_root/dist/diesis-jwt-auth-$version.zip"
 
 mkdir -p "$package_root" "$repo_root/dist"
 
@@ -65,7 +65,7 @@ rm -f "$artifact"
 
 (
   cd "$temporary_root"
-  zip -qr "$artifact" diesis-wp-jwt-auth
+  zip -qr "$artifact" diesis-jwt-auth
 )
 
 echo "$artifact"

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth\Tests;
+namespace Diesis\JwtAuth\Tests;
 
-use Diesis\WpJwtAuth\SigningKeyCache;
-use Diesis\WpJwtAuth\SigningKeysUnavailable;
+use Diesis\JwtAuth\SigningKeyCache;
+use Diesis\JwtAuth\SigningKeysUnavailable;
 use PHPUnit\Framework\TestCase;
 
 final class SigningKeyCacheTest extends TestCase

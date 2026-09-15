@@ -9,8 +9,8 @@
 
 declare(strict_types=1);
 
-use Diesis\WpJwtAuth\Settings;
-use Diesis\WpJwtAuth\SigningKeyCache;
+use Diesis\JwtAuth\Settings;
+use Diesis\JwtAuth\SigningKeyCache;
 
 if (! defined('WP_UNINSTALL_PLUGIN')) {
     exit;

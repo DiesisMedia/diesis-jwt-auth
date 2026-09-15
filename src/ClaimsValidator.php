@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth;
+namespace Diesis\JwtAuth;
 
 final class ClaimsValidator
 {

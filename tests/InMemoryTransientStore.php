@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth\Tests;
+namespace Diesis\JwtAuth\Tests;
 
-use Diesis\WpJwtAuth\TransientStore;
+use Diesis\JwtAuth\TransientStore;
 
 /**
  * Test adapter for the transient seam. Remembers the TTL per name so tests can

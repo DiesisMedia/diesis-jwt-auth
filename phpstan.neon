@@ -1,7 +1,7 @@
 parameters:
     level: 9
     paths:
-        - diesis-wp-jwt-auth.php
+        - diesis-jwt-auth.php
         - uninstall.php
         - src
     scanFiles:

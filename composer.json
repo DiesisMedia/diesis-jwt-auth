@@ -1,5 +1,5 @@
 {
-    "name": "diesis/wp-jwt-auth",
+    "name": "diesis/jwt-auth",
     "description": "Validate Cloudflare Access JWTs at a WordPress origin for selected paths.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
@@ -17,12 +17,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Diesis\\WpJwtAuth\\": "src/"
+            "Diesis\\JwtAuth\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Diesis\\WpJwtAuth\\Tests\\": "tests/"
+            "Diesis\\JwtAuth\\Tests\\": "tests/"
         }
     },
     "config": {
@@ -52,8 +52,8 @@
     "extra": {
         "strauss": {
             "target_directory": "vendor-prefixed",
-            "namespace_prefix": "Diesis\\WpJwtAuth\\Vendor\\",
-            "classmap_prefix": "Diesis_WpJwtAuth_Vendor_",
+            "namespace_prefix": "Diesis\\JwtAuth\\Vendor\\",
+            "classmap_prefix": "Diesis_JwtAuth_Vendor_",
             "packages": [
                 "firebase/php-jwt"
             ],

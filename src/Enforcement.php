@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth;
+namespace Diesis\JwtAuth;
 
 /**
  * Decides whether a request may reach the origin. Built once per request from

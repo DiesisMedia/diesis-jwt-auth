@@ -37,7 +37,7 @@ Enforcement only runs when the settings are complete and the issuer is an HTTPS 
 
 To verify tokens the plugin downloads the public signing keys of your Cloudflare Access team from the issuer you configure, for example `https://your-team.cloudflareaccess.com/cdn-cgi/access/certs`. No site data is sent; the request is a plain download of public keys, repeated at most every 12 hours or after a key rotation. Cloudflare's terms and privacy policy apply to that endpoint: [Terms](https://www.cloudflare.com/terms/), [Privacy policy](https://www.cloudflare.com/privacypolicy/).
 
-Source code, issues and support: [github.com/DiesisMedia/diesis-wp-jwt-auth](https://github.com/DiesisMedia/diesis-wp-jwt-auth)
+Source code, issues and support: [github.com/DiesisMedia/diesis-jwt-auth](https://github.com/DiesisMedia/diesis-jwt-auth)
 
 == Installation ==
 

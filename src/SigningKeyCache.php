@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth;
+namespace Diesis\JwtAuth;
 
 use Closure;
 
@@ -20,8 +20,8 @@ use Closure;
  */
 final class SigningKeyCache
 {
-    private const KEY_SET_PREFIX = 'diesis_wp_jwt_auth_jwks_';
-    private const LAST_FETCH_PREFIX = 'diesis_wp_jwt_auth_jwks_refreshed_';
+    private const KEY_SET_PREFIX = 'diesis_jwt_auth_jwks_';
+    private const LAST_FETCH_PREFIX = 'diesis_jwt_auth_jwks_refreshed_';
     private const KEY_SET_TTL = 12 * 3600;
     private const LAST_FETCH_TTL = 86400;
     private const REFRESH_INTERVAL = 5 * 60;

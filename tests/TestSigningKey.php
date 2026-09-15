@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Diesis\WpJwtAuth\Tests;
+namespace Diesis\JwtAuth\Tests;
 
-use Diesis\WpJwtAuth\Vendor\Firebase\JWT\JWT;
+use Diesis\JwtAuth\Vendor\Firebase\JWT\JWT;
 use PHPUnit\Framework\Assert;
 
 /**
