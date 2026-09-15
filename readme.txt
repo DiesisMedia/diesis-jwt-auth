@@ -4,7 +4,7 @@ Tags: cloudflare, access, jwt, authentication, security
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -81,6 +81,9 @@ Yes. Settings are per site, and uninstalling cleans up every site of the network
 
 == Changelog ==
 
+= 1.3.0 =
+* The plugin slug and text domain are now `diesis-jwt-auth`; the option and cached key names follow it.
+
 = 1.2.0 =
 * Renamed to DIESIS JWT Auth for Cloudflare Access; first release in the WordPress plugin directory.
 * The bundled JWT library is now namespaced to this plugin, so another plugin shipping a different version cannot replace it.
@@ -103,6 +106,9 @@ Yes. Settings are per site, and uninstalling cleans up every site of the network
 * Initial release: validates Cloudflare Access JWTs at the WordPress origin, protects configurable login and admin paths, optional email allowlist.
 
 == Upgrade Notice ==
+
+= 1.3.0 =
+Plugin slug renamed to diesis-jwt-auth. Installs of the earlier diesis-wp-jwt-auth folder are separate plugins: install this one, enter or copy the settings, then delete the old folder.
 
 = 1.2.0 =
 Plugin renamed. Settings and behaviour are unchanged; no action needed.
