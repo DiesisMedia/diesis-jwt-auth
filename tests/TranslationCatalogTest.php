@@ -9,8 +9,10 @@ use PHPUnit\Framework\TestCase;
 final class TranslationCatalogTest extends TestCase
 {
     private const POT = __DIR__ . '/../languages/diesis-jwt-auth.pot';
-    private const DE_PO = __DIR__ . '/../languages/diesis-jwt-auth-de_DE.po';
-    private const DE_PHP = __DIR__ . '/../languages/diesis-jwt-auth-de_DE.l10n.php';
+    private const LANGUAGES = __DIR__ . '/../languages';
+
+    /** @var list<string> */
+    private const LOCALES = ['de_DE', 'es_ES', 'it_IT', 'ja', 'pt_BR', 'zh_CN'];
 
     /** @var array<string, list<string>> */
     private const KEEP_ENGLISH_IN_SENTENCES = [
@@ -47,55 +49,75 @@ final class TranslationCatalogTest extends TestCase
         }
     }
 
-    public function testGermanCatalogTranslatesEveryTemplateString(): void
+    public function testShippedLocalesAreExactlyThoseInTheSpec(): void
     {
-        $translations = self::translations(self::DE_PO);
-
-        foreach (self::msgids(self::POT) as $msgid) {
-            self::assertArrayHasKey($msgid, $translations);
-            self::assertNotSame('', $translations[$msgid]);
+        $found = [];
+        foreach (glob(self::LANGUAGES . '/diesis-jwt-auth-*.po') ?: [] as $po) {
+            if (preg_match('/^diesis-jwt-auth-(.+)\\.po$/', basename($po), $matches) === 1) {
+                $found[] = $matches[1];
+            }
         }
+        sort($found);
+        self::assertSame(self::LOCALES, $found);
     }
 
-    public function testGermanCatalogLeavesKeepEnglishLabelsUntranslated(): void
+    public function testEveryShippedLocaleTranslatesEveryTemplateString(): void
     {
-        $translations = self::translations(self::DE_PO);
+        foreach (self::LOCALES as $locale) {
+            $translations = self::translations(self::po($locale));
 
-        foreach (self::KEEP_ENGLISH as $msgid) {
-            self::assertSame($msgid, $translations[$msgid]);
-        }
-    }
-
-    public function testGermanCatalogKeepsEnglishTermsInsideSentences(): void
-    {
-        $translations = self::translations(self::DE_PO);
-
-        foreach (self::KEEP_ENGLISH_IN_SENTENCES as $msgid => $terms) {
-            foreach ($terms as $term) {
-                self::assertStringContainsString($term, $translations[$msgid]);
+            foreach (self::msgids(self::POT) as $msgid) {
+                self::assertArrayHasKey($msgid, $translations, $locale);
+                self::assertNotSame('', $translations[$msgid], $locale);
             }
         }
     }
 
-    public function testGermanCatalogTranslatesNonEnglishLabels(): void
+    public function testEveryShippedLocaleLeavesKeepEnglishLabelsUntranslated(): void
     {
-        $translations = self::translations(self::DE_PO);
+        foreach (self::LOCALES as $locale) {
+            $translations = self::translations(self::po($locale));
 
-        foreach (self::msgids(self::POT) as $msgid) {
-            if (in_array($msgid, self::KEEP_ENGLISH, true)) {
-                continue;
+            foreach (self::KEEP_ENGLISH as $msgid) {
+                self::assertSame($msgid, $translations[$msgid], $locale);
             }
-            self::assertNotSame($msgid, $translations[$msgid]);
         }
     }
 
-    public function testGermanCompiledCatalogMatchesThePoFile(): void
+    public function testEveryShippedLocaleKeepsEnglishTermsInsideSentences(): void
     {
-        self::assertFileExists(self::DE_PHP);
-        $compiled = require self::DE_PHP;
-        self::assertIsArray($compiled);
-        self::assertArrayHasKey('messages', $compiled);
-        self::assertSame(self::translations(self::DE_PO), $compiled['messages']);
+        foreach (self::LOCALES as $locale) {
+            $translations = self::translations(self::po($locale));
+
+            foreach (self::KEEP_ENGLISH_IN_SENTENCES as $msgid => $terms) {
+                foreach ($terms as $term) {
+                    self::assertStringContainsString($term, $translations[$msgid], $locale);
+                }
+            }
+        }
+    }
+
+    public function testEveryShippedLocaleTranslatesNonEnglishLabels(): void
+    {
+        foreach (self::LOCALES as $locale) {
+            $translations = self::translations(self::po($locale));
+
+            foreach (self::msgids(self::POT) as $msgid) {
+                if (in_array($msgid, self::KEEP_ENGLISH, true)) {
+                    continue;
+                }
+                self::assertNotSame($msgid, $translations[$msgid], $locale);
+            }
+        }
+    }
+
+    public function testEveryCompiledCatalogMatchesItsPoFile(): void
+    {
+        foreach (self::LOCALES as $locale) {
+            $compiled = self::compiled($locale);
+            self::assertArrayHasKey('messages', $compiled, $locale);
+            self::assertSame(self::translations(self::po($locale)), $compiled['messages'], $locale);
+        }
     }
 
     public function testPluginHeaderDeclaresLanguagesDomainPath(): void
@@ -126,6 +148,48 @@ final class TranslationCatalogTest extends TestCase
                 $pot
             );
         }
+    }
+
+    public function testPluginIsReleasedAs140WithShippedLocalesInTheChangelog(): void
+    {
+        $header = file_get_contents(dirname(__DIR__) . '/diesis-jwt-auth.php');
+        self::assertNotFalse($header);
+        self::assertMatchesRegularExpression('/^\s*\* Version: 1\.4\.0$/m', $header);
+
+        $readme = file_get_contents(dirname(__DIR__) . '/readme.txt');
+        self::assertNotFalse($readme);
+        self::assertMatchesRegularExpression('/^Stable tag: 1\.4\.0$/m', $readme);
+        self::assertMatchesRegularExpression('/= 1\.4\.0 =.*translat/s', $readme);
+        foreach (self::LOCALES as $locale) {
+            self::assertMatchesRegularExpression('/= 1\.4\.0 =.*' . preg_quote($locale, '/') . '/s', $readme);
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function compiled(string $locale): array
+    {
+        static $cache = [];
+        if (! isset($cache[$locale])) {
+            $path = self::php($locale);
+            self::assertFileExists($path, $locale);
+            $loaded = require $path;
+            self::assertIsArray($loaded, $locale);
+            $cache[$locale] = $loaded;
+        }
+
+        return $cache[$locale];
+    }
+
+    private static function po(string $locale): string
+    {
+        return self::LANGUAGES . '/diesis-jwt-auth-' . $locale . '.po';
+    }
+
+    private static function php(string $locale): string
+    {
+        return self::LANGUAGES . '/diesis-jwt-auth-' . $locale . '.l10n.php';
     }
 
     /**
