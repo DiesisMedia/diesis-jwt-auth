@@ -36,7 +36,9 @@ final class SettingsPage
     public function addSettingsPage(): void
     {
         add_options_page(
+            /* translators: Keep in English. */
             __('DIESIS JWT Auth for Cloudflare Access', 'diesis-jwt-auth'),
+            /* translators: Keep in English. */
             __('DIESIS JWT Auth', 'diesis-jwt-auth'),
             'manage_options',
             self::SLUG,
@@ -90,14 +92,14 @@ final class SettingsPage
         $option = Settings::OPTION;
         ?>
         <div class="wrap">
-            <h1><?php echo esc_html__('DIESIS JWT Auth for Cloudflare Access', 'diesis-jwt-auth'); ?></h1>
+            <h1><?php echo /* translators: Keep in English. */ esc_html__('DIESIS JWT Auth for Cloudflare Access', 'diesis-jwt-auth'); ?></h1>
             <p><?php echo esc_html__('Validates Cloudflare Access at the WordPress origin. This plugin does not replace the WordPress login.', 'diesis-jwt-auth'); ?></p>
             <?php settings_errors($option); ?>
             <form action="options.php" method="post">
                 <?php settings_fields(self::GROUP); ?>
                 <table class="form-table" role="presentation">
                     <tr>
-                        <th scope="row"><?php echo esc_html__('Enforcement', 'diesis-jwt-auth'); ?></th>
+                        <th scope="row"><?php echo /* translators: Keep in English. */ esc_html__('Enforcement', 'diesis-jwt-auth'); ?></th>
                         <td>
                             <label>
                                 <input type="checkbox" name="<?php echo esc_attr($option); ?>[enabled]" value="1" <?php checked($settings->enabled); ?>>
@@ -106,13 +108,13 @@ final class SettingsPage
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="diesis-jwt-auth-issuer"><?php echo esc_html__('Issuer', 'diesis-jwt-auth'); ?></label></th>
+                        <th scope="row"><label for="diesis-jwt-auth-issuer"><?php echo /* translators: Keep in English. */ esc_html__('Issuer', 'diesis-jwt-auth'); ?></label></th>
                         <td>
                             <input class="regular-text" id="diesis-jwt-auth-issuer" name="<?php echo esc_attr($option); ?>[issuer]" type="url" value="<?php echo esc_attr($settings->issuer); ?>" placeholder="https://team.cloudflareaccess.com">
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="diesis-jwt-auth-audience"><?php echo esc_html__('Application audience', 'diesis-jwt-auth'); ?></label></th>
+                        <th scope="row"><label for="diesis-jwt-auth-audience"><?php echo /* translators: Keep in English. */ esc_html__('Application audience', 'diesis-jwt-auth'); ?></label></th>
                         <td>
                             <input class="large-text code" id="diesis-jwt-auth-audience" name="<?php echo esc_attr($option); ?>[audience]" type="text" value="<?php echo esc_attr($settings->audience); ?>">
                         </td>

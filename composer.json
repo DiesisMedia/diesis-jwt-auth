@@ -35,6 +35,8 @@
         "analyse": "phpstan analyse --memory-limit=1G",
         "lint": "phpcs",
         "test": "phpunit",
+        "i18n:pot": "php bin/make-pot.php",
+        "i18n:php": "php bin/make-php.php",
         "prefix-namespaces": [
             "bin/strauss.sh",
             "@composer dump-autoload"
