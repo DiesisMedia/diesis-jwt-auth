@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: DIESIS JWT Auth for Cloudflare Access 1.3.0\n"
+"Project-Id-Version: DIESIS JWT Auth for Cloudflare Access 1.4.0\n"
 "Report-Msgid-Bugs-To: https://github.com/DiesisMedia/diesis-jwt-auth/issues\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr "拒绝访问。"
 
 #: src/SettingsPage.php:123
 msgid "Allowed emails"
-msgstr "允许的电子邮件"
+msgstr "允许的电子邮件地址"
 
 #. translators: Keep in English.
 #: src/SettingsPage.php:117
@@ -39,7 +39,7 @@ msgstr "DIESIS JWT Auth"
 msgid "DIESIS JWT Auth for Cloudflare Access"
 msgstr "DIESIS JWT Auth for Cloudflare Access"
 
-#: diesis-jwt-auth.php:31
+#: diesis-jwt-auth.php:41
 msgid "DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies."
 msgstr "DIESIS JWT Auth for Cloudflare Access 不完整。请您重新安装包含其依赖项的发行版 ZIP。"
 
@@ -59,7 +59,7 @@ msgstr "Issuer"
 
 #: src/SettingsPage.php:59
 msgid "Issuer and audience are required before enforcement can be enabled."
-msgstr "启用 Enforcement 之前必须填写 Issuer 和 audience。"
+msgstr "启用 Enforcement 之前必须填写 Issuer 和 Application audience。"
 
 #: src/SettingsPage.php:133
 msgid "One path per line. A trailing * matches a prefix. Query strings are ignored."

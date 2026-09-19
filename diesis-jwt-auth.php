@@ -23,6 +23,16 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
+// Network-activated plugins need an explicit path, before enforcement can deny a request.
+add_action(
+    'init',
+    static function (): void {
+        // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- WordPress 6.8 does not register bundled catalogs for network-activated plugins.
+        load_plugin_textdomain('diesis-jwt-auth', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    },
+    -101
+);
+
 if (! is_readable(__DIR__ . '/vendor/autoload.php')) {
     add_action(
         'admin_notices',

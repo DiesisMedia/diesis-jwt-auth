@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: DIESIS JWT Auth for Cloudflare Access 1.3.0\n"
+"Project-Id-Version: DIESIS JWT Auth for Cloudflare Access 1.4.0\n"
 "Report-Msgid-Bugs-To: https://github.com/DiesisMedia/diesis-jwt-auth/issues\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -39,7 +39,7 @@ msgstr "DIESIS JWT Auth"
 msgid "DIESIS JWT Auth for Cloudflare Access"
 msgstr "DIESIS JWT Auth for Cloudflare Access"
 
-#: diesis-jwt-auth.php:31
+#: diesis-jwt-auth.php:41
 msgid "DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies."
 msgstr "DIESIS JWT Auth for Cloudflare Access ist unvollständig. Installieren Sie das Release-ZIP mit den Abhängigkeiten erneut."
 
@@ -59,7 +59,7 @@ msgstr "Issuer"
 
 #: src/SettingsPage.php:59
 msgid "Issuer and audience are required before enforcement can be enabled."
-msgstr "Issuer und audience sind erforderlich, bevor Enforcement aktiviert werden kann."
+msgstr "Issuer und Application audience sind erforderlich, bevor Enforcement aktiviert werden kann."
 
 #: src/SettingsPage.php:133
 msgid "One path per line. A trailing * matches a prefix. Query strings are ignored."
@@ -87,8 +87,8 @@ msgstr "Einstellungen"
 
 #: src/SettingsPage.php:58
 msgid "The issuer must be an HTTPS cloudflareaccess.com URL."
-msgstr "Issuer muss eine HTTPS-URL von cloudflareaccess.com sein."
+msgstr "Der Issuer muss eine HTTPS-URL von cloudflareaccess.com sein."
 
 #: src/SettingsPage.php:96
 msgid "Validates Cloudflare Access at the WordPress origin. This plugin does not replace the WordPress login."
-msgstr "Validiert Cloudflare Access am WordPress origin. Dieses Plugin ersetzt nicht die WordPress-Anmeldung."
+msgstr "Prüft Cloudflare Access auf dem WordPress-Server (origin). Dieses Plugin ersetzt nicht die WordPress-Anmeldung."

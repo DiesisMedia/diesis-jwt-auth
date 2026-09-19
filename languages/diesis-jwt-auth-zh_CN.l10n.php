@@ -3,7 +3,7 @@
 return array(
     'messages' => array(
         'Access denied.' => '拒绝访问。',
-        'Allowed emails' => '允许的电子邮件',
+        'Allowed emails' => '允许的电子邮件地址',
         'Application audience' => 'Application audience',
         'Cloudflare Access authentication required' => '需要 Cloudflare Access 身份验证',
         'DIESIS JWT Auth' => 'DIESIS JWT Auth',
@@ -12,7 +12,7 @@ return array(
         'Enforcement' => 'Enforcement',
         'Excluded paths' => '排除的路径',
         'Issuer' => 'Issuer',
-        'Issuer and audience are required before enforcement can be enabled.' => '启用 Enforcement 之前必须填写 Issuer 和 audience。',
+        'Issuer and audience are required before enforcement can be enabled.' => '启用 Enforcement 之前必须填写 Issuer 和 Application audience。',
         'One path per line. A trailing * matches a prefix. Query strings are ignored.' => '每行一个路径。末尾的 * 匹配前缀。查询字符串会被忽略。',
         'Only exclude a path if the matching Cloudflare Access destination also leaves it public.' => '请您仅在对应的 Cloudflare Access 目标也将其保持公开时，才排除该路径。',
         'Optional defense in depth. Enter one address per line. Leave empty to trust the Access policy.' => '可选的额外防护。请您每行输入一个地址。留空即表示您信任 Access policy。',
