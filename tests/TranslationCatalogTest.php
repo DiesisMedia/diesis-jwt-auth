@@ -18,7 +18,7 @@ final class TranslationCatalogTest extends TestCase
     private const KEEP_ENGLISH_IN_SENTENCES = [
         'Cloudflare Access authentication required' => ['Cloudflare Access'],
         'DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies.' => ['DIESIS JWT Auth for Cloudflare Access'],
-        'Issuer and audience are required before enforcement can be enabled.' => ['Issuer', 'Enforcement'],
+        'Issuer and audience are required before enforcement can be enabled.' => ['Issuer', 'Application audience', 'Enforcement'],
         'Only exclude a path if the matching Cloudflare Access destination also leaves it public.' => ['Cloudflare Access'],
         'Optional defense in depth. Enter one address per line. Leave empty to trust the Access policy.' => ['Access policy'],
         'Require a valid Access JWT on the configured paths' => ['Access JWT'],
@@ -150,18 +150,26 @@ final class TranslationCatalogTest extends TestCase
         }
     }
 
-    public function testPluginIsReleasedAs140WithShippedLocalesInTheChangelog(): void
+    public function testPluginVersionMatchesStableTag(): void
     {
         $header = file_get_contents(dirname(__DIR__) . '/diesis-jwt-auth.php');
         self::assertNotFalse($header);
-        self::assertMatchesRegularExpression('/^\s*\* Version: 1\.4\.0$/m', $header);
+        self::assertSame(1, preg_match('/^\s*\* Version: (\d+\.\d+\.\d+)$/m', $header, $matches));
 
         $readme = file_get_contents(dirname(__DIR__) . '/readme.txt');
         self::assertNotFalse($readme);
-        self::assertMatchesRegularExpression('/^Stable tag: 1\.4\.0$/m', $readme);
-        self::assertMatchesRegularExpression('/= 1\.4\.0 =.*translat/s', $readme);
+        self::assertMatchesRegularExpression('/^Stable tag: ' . preg_quote($matches[1], '/') . '$/m', $readme);
+    }
+
+    public function test140ChangelogListsShippedLocales(): void
+    {
+        $readme = file_get_contents(dirname(__DIR__) . '/readme.txt');
+        self::assertNotFalse($readme);
+        self::assertSame(1, preg_match('/^= 1\.4\.0 =\R(.*?)(?=^= |\z)/ms', $readme, $matches));
+        $entry = $matches[1];
+        self::assertStringContainsString('translat', $entry);
         foreach (self::LOCALES as $locale) {
-            self::assertMatchesRegularExpression('/= 1\.4\.0 =.*' . preg_quote($locale, '/') . '/s', $readme);
+            self::assertStringContainsString($locale, $entry);
         }
     }
 

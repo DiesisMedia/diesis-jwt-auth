@@ -37,7 +37,7 @@ msgstr ""
 msgid "DIESIS JWT Auth for Cloudflare Access"
 msgstr ""
 
-#: diesis-jwt-auth.php:31
+#: diesis-jwt-auth.php:40
 msgid "DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies."
 msgstr ""
 

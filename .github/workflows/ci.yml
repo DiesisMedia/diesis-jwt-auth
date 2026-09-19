@@ -25,6 +25,19 @@ jobs:
       - run: composer test
       - run: composer analyse
       - run: composer lint
+      # Exercise the minimum supported WordPress translation loader without a DB.
+      # Network activation does not register Domain Path; the plugin must do it.
+      - name: Check bundled translations with WordPress 6.8
+        run: |
+          fixture="$(mktemp -d)"
+          trap 'rm -rf "$fixture"' EXIT
+          curl -fsSL https://wordpress.org/wordpress-6.8.tar.gz | tar -xz -C "$fixture"
+          mkdir -p "$fixture/plugins/diesis-jwt-auth"
+          cp diesis-jwt-auth.php "$fixture/plugins/diesis-jwt-auth/"
+          cp -R languages "$fixture/plugins/diesis-jwt-auth/"
+          for locale in de_DE es_ES it_IT ja pt_BR zh_CN; do
+            php tests/wordpress-translations.php "$locale" "$fixture/wordpress" "$fixture/plugins"
+          done
 
   package:
     runs-on: ubuntu-latest

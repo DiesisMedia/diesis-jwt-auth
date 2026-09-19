@@ -12,7 +12,7 @@ return array(
         'Enforcement' => 'Enforcement',
         'Excluded paths' => 'Rutas excluidas',
         'Issuer' => 'Issuer',
-        'Issuer and audience are required before enforcement can be enabled.' => 'Issuer y audience son necesarios antes de poder activar Enforcement.',
+        'Issuer and audience are required before enforcement can be enabled.' => 'Issuer y Application audience son necesarios antes de poder activar Enforcement.',
         'One path per line. A trailing * matches a prefix. Query strings are ignored.' => 'Una ruta por línea. Un * al final coincide con un prefijo. Se ignoran las cadenas de consulta.',
         'Only exclude a path if the matching Cloudflare Access destination also leaves it public.' => 'Excluya una ruta solo si el destino de Cloudflare Access correspondiente también la deja pública.',
         'Optional defense in depth. Enter one address per line. Leave empty to trust the Access policy.' => 'Protección adicional opcional. Introduzca una dirección por línea. Déjelo vacío para confiar en la Access policy.',
