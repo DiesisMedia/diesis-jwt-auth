@@ -39,7 +39,7 @@ msgstr "DIESIS JWT Auth"
 msgid "DIESIS JWT Auth for Cloudflare Access"
 msgstr "DIESIS JWT Auth for Cloudflare Access"
 
-#: diesis-jwt-auth.php:40
+#: diesis-jwt-auth.php:41
 msgid "DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies."
 msgstr "DIESIS JWT Auth for Cloudflare Access は不完全です。依存関係を含むリリース ZIP を再インストールしてください。"
 

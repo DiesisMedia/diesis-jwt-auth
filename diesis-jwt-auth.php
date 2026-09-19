@@ -27,6 +27,7 @@ if (! defined('ABSPATH')) {
 add_action(
     'init',
     static function (): void {
+        // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- WordPress 6.8 does not register bundled catalogs for network-activated plugins.
         load_plugin_textdomain('diesis-jwt-auth', false, dirname(plugin_basename(__FILE__)) . '/languages');
     },
     -101
