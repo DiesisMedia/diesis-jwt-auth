@@ -19,26 +19,40 @@ Install from the WordPress plugin directory, or download `diesis-jwt-auth-<versi
 
 ## Configuration
 
-Get the issuer and application audience from the Cloudflare Zero Trust dashboard. A typical configuration looks like this:
+Open **Settings > DIESIS JWT Auth**. A fresh installation uses these defaults:
+
+| Setting | Default |
+| --- | --- |
+| Enforcement | Disabled |
+| Issuer | Empty. Enter your Cloudflare Access team domain. |
+| Application audience | Empty. Enter the audience tag of your Access application. |
+| Allowed emails | Empty. No additional email allowlist at the origin. A valid user token with an email claim is still required. |
+| Protected paths | The three lines below. |
+| Excluded paths | Empty. No exclusions. |
+
+Copy this block into **Protected paths**, one path per line:
 
 ```text
-Issuer:
-https://<team-name>.cloudflareaccess.com
-
-Application audience:
-<application-audience-tag>
-
-Allowed emails:
-admin@example.com
-editor@example.com
-
-Protected paths:
 /wp-login.php*
 /wp-admin
 /wp-admin/*
 ```
 
-The optional email list is a second check at the origin. It should match the Cloudflare Access policy.
+These defaults apply when WordPress is installed at the domain root. If its login and admin URLs start with `/wordpress/`, use this block instead:
+
+```text
+/wordpress/wp-login.php*
+/wordpress/wp-admin
+/wordpress/wp-admin/*
+```
+
+Use the path prefix from your actual login and admin URLs. Do not include the domain. Leaving **Protected paths** empty restores the default three paths; it does not disable protection.
+
+**Issuer** and **Application audience** have no shared default. Copy them from your own self-hosted application in Cloudflare Zero Trust. The issuer has the form `https://your-team.cloudflareaccess.com`, with your team name and no extra path. The audience is the application's audience tag, not its name or your site URL.
+
+Leave **Allowed emails** and **Excluded paths** empty for the default setup. To add an email allowlist, enter your actual permitted addresses, one per line. This is a second check at the origin and should match the Cloudflare Access policy.
+
+Save with **Enforcement** disabled, confirm that your Cloudflare Access application covers the same paths, then enable enforcement and save again. Test access through Cloudflare and confirm that a direct request to a protected origin path without a valid Access JWT receives HTTP 403.
 
 ## Path matching
 
@@ -74,7 +88,7 @@ composer install
 composer test
 composer analyse
 composer lint
-bin/build-release.sh 1.3.0
+bin/build-release.sh 1.4.0
 ```
 
 `composer install` also runs [Strauss](https://github.com/BrianHenryIE/strauss) through `bin/strauss.sh`, which copies `firebase/php-jwt` into `vendor-prefixed/` under the `Diesis\JwtAuth\Vendor\` namespace and removes the unprefixed copy. Another plugin bundling a different version of the library can therefore not replace ours. The script downloads a pinned `strauss.phar` on first use and verifies its checksum; both `vendor-prefixed/` and the phar are ignored by git.

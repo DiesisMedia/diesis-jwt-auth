@@ -45,9 +45,36 @@ Source code, issues and support: [github.com/DiesisMedia/diesis-jwt-auth](https:
 2. Install the plugin from the WordPress plugin directory or upload the ZIP under Plugins > Add New Plugin > Upload Plugin, then activate it.
 3. Open Settings > DIESIS JWT Auth.
 4. Enter the issuer, for example `https://your-team.cloudflareaccess.com`, and the application audience. Save with enforcement still disabled.
-5. Check that the protected paths match the paths your Access application covers. The defaults protect `/wp-login.php` and `/wp-admin`.
+5. Check that the protected paths match the paths your Access application covers. Use the copyable defaults below, adjusting the prefix if WordPress is installed in a subdirectory.
 6. Enable enforcement and save.
 7. Test twice: once through your Cloudflare URL, which should work, and once directly against the origin, which should return 403.
+
+= Default settings =
+
+A fresh installation starts with these values:
+
+* Enforcement: disabled.
+* Issuer: empty. Enter your own Cloudflare Access team domain, such as `https://your-team.cloudflareaccess.com`, with no extra path.
+* Application audience: empty. Copy the audience tag of your self-hosted Access application from Cloudflare Zero Trust. This is not the application name or your site URL.
+* Allowed emails: empty. There is no additional email allowlist at the origin. A valid user token with an email claim is still required.
+* Protected paths: the three lines below.
+* Excluded paths: empty. There are no exclusions.
+
+Copy these lines into Protected paths, one per line, for WordPress installed at the domain root:
+
+    /wp-login.php*
+    /wp-admin
+    /wp-admin/*
+
+If your login and admin URLs start with `/wordpress/`, use:
+
+    /wordpress/wp-login.php*
+    /wordpress/wp-admin
+    /wordpress/wp-admin/*
+
+Use the path prefix from your actual login and admin URLs, without the domain. Leaving Protected paths empty restores the default three paths; it does not disable protection.
+
+Issuer and Application audience are specific to your Cloudflare setup and have no shared default. Leave Allowed emails and Excluded paths empty for the default setup. If you add an email allowlist, use your actual permitted addresses, one per line, matching your Access policy.
 
 == Frequently Asked Questions ==
 
@@ -83,6 +110,7 @@ Yes. Settings are per site, and uninstalling cleans up every site of the network
 
 = 1.4.0 =
 * The plugin is translatable. It ships catalogs for de_DE, es_ES, it_IT, zh_CN, ja, and pt_BR; further languages can come from translate.wordpress.org.
+* Documented all default settings, with copyable protected paths for root and subdirectory installations.
 
 = 1.3.0 =
 * The plugin slug and text domain are now `diesis-jwt-auth`; the option and cached key names follow it.
