@@ -93,6 +93,14 @@ bin/build-release.sh 1.4.1
 
 `composer install` also runs [Strauss](https://github.com/BrianHenryIE/strauss) through `bin/strauss.sh`, which copies `firebase/php-jwt` into `vendor-prefixed/` under the `Diesis\JwtAuth\Vendor\` namespace and removes the unprefixed copy. Another plugin bundling a different version of the library can therefore not replace ours. The script downloads a pinned `strauss.phar` on first use and verifies its checksum; both `vendor-prefixed/` and the phar are ignored by git.
 
+## Releasing
+
+1. Bump the version in `diesis-jwt-auth.php` and the `Stable tag` in `readme.txt`, and add the changelog entry.
+2. Merge to `main`.
+3. Push the annotated tag `vX.Y.Z`.
+
+The tag runs [`deploy-wporg.yml`](.github/workflows/deploy-wporg.yml), which refuses to continue unless the tag, the plugin header and `Stable tag` agree, then builds the release ZIP and hands it to the WordPress.org SVN deploy. Setting the repository variable `WPORG_DEPLOY_DRY_RUN` to anything other than `false` stops it before the SVN commit.
+
 ## License
 
 Copyright (C) 2026 DIESIS Media - Florian Gratzl
