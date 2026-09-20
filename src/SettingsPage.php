@@ -11,7 +11,7 @@ namespace Diesis\JwtAuth;
 final class SettingsPage
 {
     private const GROUP = 'diesis_jwt_auth';
-    private const SLUG = 'diesis-jwt-auth';
+    public const SLUG = 'diesis-jwt-auth';
 
     public function register(string $pluginFile): void
     {

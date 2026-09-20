@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: DIESIS JWT Auth for Cloudflare Access 1.4.0\n"
+"Project-Id-Version: DIESIS JWT Auth for Cloudflare Access 1.4.1\n"
 "Report-Msgid-Bugs-To: https://github.com/DiesisMedia/diesis-jwt-auth/issues\n"
 "Language: it_IT\n"
 "MIME-Version: 1.0\n"
@@ -11,7 +11,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: diesis-jwt-auth\n"
 
-#: src/Plugin.php:73
+#: src/Plugin.php:74
+#: src/ReviewNudgePage.php:135
 msgid "Access denied."
 msgstr "Accesso negato."
 
@@ -24,7 +25,7 @@ msgstr "Email consentite"
 msgid "Application audience"
 msgstr "Application audience"
 
-#: src/Plugin.php:74
+#: src/Plugin.php:75
 msgid "Cloudflare Access authentication required"
 msgstr "Autenticazione Cloudflare Access richiesta"
 
@@ -43,6 +44,10 @@ msgstr "DIESIS JWT Auth for Cloudflare Access"
 msgid "DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies."
 msgstr "DIESIS JWT Auth for Cloudflare Access è incompleto. Reinstalli lo ZIP di rilascio che contiene le dipendenze."
 
+#: src/ReviewNudgePage.php:152
+msgid "Don't show this again"
+msgstr "Non mostrare più"
+
 #. translators: Keep in English.
 #: src/SettingsPage.php:102
 msgid "Enforcement"
@@ -51,6 +56,19 @@ msgstr "Enforcement"
 #: src/SettingsPage.php:137
 msgid "Excluded paths"
 msgstr "Percorsi esclusi"
+
+#. translators: Keep in English.
+#: src/ReviewNudgePage.php:103
+msgid "GitHub"
+msgstr "GitHub"
+
+#: src/ReviewNudgePage.php:84
+msgid "Happy with this plugin? Rate it on WordPress.org or star it on GitHub."
+msgstr "Soddisfatto di questo plugin? Valutalo su WordPress.org o lascia una stella su GitHub."
+
+#: src/ReviewNudgePage.php:67
+msgid "Is DIESIS JWT Auth doing its job? A short review on WordPress.org and a star on GitHub help other site owners find it."
+msgstr "DIESIS JWT Auth sta facendo il suo lavoro? Una breve recensione su WordPress.org e una stella su GitHub aiutano altri proprietari di siti a trovarlo."
 
 #. translators: Keep in English.
 #: src/SettingsPage.php:111
@@ -77,6 +95,10 @@ msgstr "Protezione aggiuntiva facoltativa. Inserisca un indirizzo per riga. Lasc
 msgid "Protected paths"
 msgstr "Percorsi protetti"
 
+#: src/ReviewNudgePage.php:99
+msgid "Rate this plugin"
+msgstr "Valuta questo plugin"
+
 #: src/SettingsPage.php:106
 msgid "Require a valid Access JWT on the configured paths"
 msgstr "Richiedere un Access JWT valido sui percorsi configurati"
@@ -85,6 +107,10 @@ msgstr "Richiedere un Access JWT valido sui percorsi configurati"
 msgid "Settings"
 msgstr "Impostazioni"
 
+#: src/ReviewNudgePage.php:145
+msgid "Star on GitHub"
+msgstr "Lascia una stella su GitHub"
+
 #: src/SettingsPage.php:58
 msgid "The issuer must be an HTTPS cloudflareaccess.com URL."
 msgstr "Issuer deve essere un URL HTTPS di cloudflareaccess.com."
@@ -92,3 +118,7 @@ msgstr "Issuer deve essere un URL HTTPS di cloudflareaccess.com."
 #: src/SettingsPage.php:96
 msgid "Validates Cloudflare Access at the WordPress origin. This plugin does not replace the WordPress login."
 msgstr "Convalida Cloudflare Access presso il WordPress origin. Questo plugin non sostituisce l'accesso a WordPress."
+
+#: src/ReviewNudgePage.php:144
+msgid "Write a review"
+msgstr "Scrivi una recensione"

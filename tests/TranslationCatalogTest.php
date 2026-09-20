@@ -18,10 +18,13 @@ final class TranslationCatalogTest extends TestCase
     private const KEEP_ENGLISH_IN_SENTENCES = [
         'Cloudflare Access authentication required' => ['Cloudflare Access'],
         'DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies.' => ['DIESIS JWT Auth for Cloudflare Access'],
+        'Happy with this plugin? Rate it on WordPress.org or star it on GitHub.' => ['WordPress.org', 'GitHub'],
+        'Is DIESIS JWT Auth doing its job? A short review on WordPress.org and a star on GitHub help other site owners find it.' => ['DIESIS JWT Auth', 'WordPress.org', 'GitHub'],
         'Issuer and audience are required before enforcement can be enabled.' => ['Issuer', 'Application audience', 'Enforcement'],
         'Only exclude a path if the matching Cloudflare Access destination also leaves it public.' => ['Cloudflare Access'],
         'Optional defense in depth. Enter one address per line. Leave empty to trust the Access policy.' => ['Access policy'],
         'Require a valid Access JWT on the configured paths' => ['Access JWT'],
+        'Star on GitHub' => ['GitHub'],
         'The issuer must be an HTTPS cloudflareaccess.com URL.' => ['Issuer'],
         'Validates Cloudflare Access at the WordPress origin. This plugin does not replace the WordPress login.' => ['Cloudflare Access', 'origin'],
     ];
@@ -32,6 +35,7 @@ final class TranslationCatalogTest extends TestCase
         'DIESIS JWT Auth',
         'DIESIS JWT Auth for Cloudflare Access',
         'Enforcement',
+        'GitHub',
         'Issuer',
     ];
 

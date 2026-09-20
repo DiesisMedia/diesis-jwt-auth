@@ -19,6 +19,7 @@ final class Plugin
     {
         $plugin = new self();
         (new SettingsPage())->register($pluginFile);
+        (new ReviewNudgePage())->register($pluginFile);
 
         add_action('init', [$plugin, 'enforce'], -100);
     }

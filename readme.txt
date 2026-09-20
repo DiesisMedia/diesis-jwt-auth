@@ -4,7 +4,7 @@ Tags: cloudflare, access, jwt, authentication, security
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,6 +98,10 @@ A cached key set stays valid for 12 hours and keeps working. Only if there are n
 
 No. Service tokens carry a `common_name` instead of an email and are always denied. Keep paths used by machines out of the protected paths.
 
+= How do I get rid of the review notice? =
+
+Click "Don't show this again" in the notice, or open the review link. Either way the notice stops for your account. It only ever appears on the Dashboard, the Plugins screen and the plugin's own settings page, and only once enforcement has been running for two weeks.
+
 = Does it work on multisite? =
 
 Yes. Settings are per site, and uninstalling cleans up every site of the network.
@@ -107,6 +111,9 @@ Yes. Settings are per site, and uninstalling cleans up every site of the network
 1. The settings page: enforcement toggle, issuer, application audience, optional allowed emails, protected and excluded paths.
 
 == Changelog ==
+
+= 1.4.1 =
+* The plugin asks for a review on WordPress.org and a star on GitHub: a dismissible notice after two weeks of enforcement, a line on the settings page, and two links in the plugin row. Dismissing it is permanent per user, and uninstalling removes everything it stored.
 
 = 1.4.0 =
 * The plugin is translatable. It ships catalogs for de_DE, es_ES, it_IT, zh_CN, ja, and pt_BR; further languages can come from translate.wordpress.org.
@@ -137,6 +144,9 @@ Yes. Settings are per site, and uninstalling cleans up every site of the network
 * Initial release: validates Cloudflare Access JWTs at the WordPress origin, protects configurable login and admin paths, optional email allowlist.
 
 == Upgrade Notice ==
+
+= 1.4.1 =
+Adds a review request in the admin. No settings change needed.
 
 = 1.4.0 =
 The plugin UI follows the WordPress language. No settings change needed.
