@@ -33,7 +33,7 @@ final class ReviewNudgePage
 
         add_action('admin_init', [$this, 'rememberEnforcingSince']);
         add_action('admin_notices', [$this, 'renderNotice']);
-        add_action('admin_footer-settings_page_' . SettingsPage::SLUG, [$this, 'renderFooter']);
+        add_action('diesis_jwt_auth_after_settings_form', [$this, 'renderFooter']);
         add_filter('plugin_row_meta', [$this, 'rowMeta'], 10, 2);
         add_action('admin_post_' . self::REVIEW_ACTION, [$this, 'handleReview']);
         add_action('admin_post_' . self::DISMISS_ACTION, [$this, 'handleDismiss']);
@@ -72,14 +72,11 @@ final class ReviewNudgePage
 
     /**
      * A permanent line under the settings form. It carries no schedule: whoever
-     * opened this page came looking for the plugin.
+     * opened this page came looking for the plugin. The settings page has
+     * already checked the capability before firing its hook.
      */
     public function renderFooter(): void
     {
-        if (! current_user_can('manage_options')) {
-            return;
-        }
-
         echo '<p class="description">'
             . esc_html__('Happy with this plugin? Rate it on WordPress.org or star it on GitHub.', 'diesis-jwt-auth')
             . ' ' . wp_kses($this->links(false), self::LINK_HTML)

@@ -143,6 +143,13 @@ final class SettingsPage
                 </table>
                 <?php submit_button(); ?>
             </form>
+            <?php
+            /**
+             * Runs inside the settings page wrapper, below the form, for
+             * anything that belongs on this page but not in the settings.
+             */
+            do_action('diesis_jwt_auth_after_settings_form');
+            ?>
         </div>
         <?php
     }

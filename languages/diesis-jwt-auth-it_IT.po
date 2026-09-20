@@ -12,7 +12,7 @@ msgstr ""
 "X-Domain: diesis-jwt-auth\n"
 
 #: src/Plugin.php:74
-#: src/ReviewNudgePage.php:149
+#: src/ReviewNudgePage.php:146
 msgid "Access denied."
 msgstr "Accesso negato."
 
@@ -44,7 +44,7 @@ msgstr "DIESIS JWT Auth for Cloudflare Access"
 msgid "DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies."
 msgstr "DIESIS JWT Auth for Cloudflare Access è incompleto. Reinstalli lo ZIP di rilascio che contiene le dipendenze."
 
-#: src/ReviewNudgePage.php:166
+#: src/ReviewNudgePage.php:163
 msgid "Don't show this again"
 msgstr "Non mostrare più"
 
@@ -58,11 +58,11 @@ msgid "Excluded paths"
 msgstr "Percorsi esclusi"
 
 #. translators: Keep in English.
-#: src/ReviewNudgePage.php:103
+#: src/ReviewNudgePage.php:100
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/ReviewNudgePage.php:84
+#: src/ReviewNudgePage.php:81
 msgid "Happy with this plugin? Rate it on WordPress.org or star it on GitHub."
 msgstr "Soddisfatto di questo plugin? Valutalo su WordPress.org o lascia una stella su GitHub."
 
@@ -95,7 +95,7 @@ msgstr "Protezione aggiuntiva facoltativa. Inserisca un indirizzo per riga. Lasc
 msgid "Protected paths"
 msgstr "Percorsi protetti"
 
-#: src/ReviewNudgePage.php:99
+#: src/ReviewNudgePage.php:96
 msgid "Rate this plugin"
 msgstr "Valuta questo plugin"
 
@@ -107,7 +107,7 @@ msgstr "Richiedere un Access JWT valido sui percorsi configurati"
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: src/ReviewNudgePage.php:159
+#: src/ReviewNudgePage.php:156
 msgid "Star on GitHub"
 msgstr "Lascia una stella su GitHub"
 
@@ -119,6 +119,6 @@ msgstr "Issuer deve essere un URL HTTPS di cloudflareaccess.com."
 msgid "Validates Cloudflare Access at the WordPress origin. This plugin does not replace the WordPress login."
 msgstr "Convalida Cloudflare Access presso il WordPress origin. Questo plugin non sostituisce l'accesso a WordPress."
 
-#: src/ReviewNudgePage.php:158
+#: src/ReviewNudgePage.php:155
 msgid "Write a review"
 msgstr "Scrivi una recensione"

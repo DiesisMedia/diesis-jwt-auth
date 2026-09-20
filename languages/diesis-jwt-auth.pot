@@ -10,7 +10,7 @@ msgstr ""
 "X-Domain: diesis-jwt-auth\n"
 
 #: src/Plugin.php:74
-#: src/ReviewNudgePage.php:149
+#: src/ReviewNudgePage.php:146
 msgid "Access denied."
 msgstr ""
 
@@ -42,7 +42,7 @@ msgstr ""
 msgid "DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies."
 msgstr ""
 
-#: src/ReviewNudgePage.php:166
+#: src/ReviewNudgePage.php:163
 msgid "Don't show this again"
 msgstr ""
 
@@ -56,11 +56,11 @@ msgid "Excluded paths"
 msgstr ""
 
 #. translators: Keep in English.
-#: src/ReviewNudgePage.php:103
+#: src/ReviewNudgePage.php:100
 msgid "GitHub"
 msgstr ""
 
-#: src/ReviewNudgePage.php:84
+#: src/ReviewNudgePage.php:81
 msgid "Happy with this plugin? Rate it on WordPress.org or star it on GitHub."
 msgstr ""
 
@@ -93,7 +93,7 @@ msgstr ""
 msgid "Protected paths"
 msgstr ""
 
-#: src/ReviewNudgePage.php:99
+#: src/ReviewNudgePage.php:96
 msgid "Rate this plugin"
 msgstr ""
 
@@ -105,7 +105,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/ReviewNudgePage.php:159
+#: src/ReviewNudgePage.php:156
 msgid "Star on GitHub"
 msgstr ""
 
@@ -117,6 +117,6 @@ msgstr ""
 msgid "Validates Cloudflare Access at the WordPress origin. This plugin does not replace the WordPress login."
 msgstr ""
 
-#: src/ReviewNudgePage.php:158
+#: src/ReviewNudgePage.php:155
 msgid "Write a review"
 msgstr ""
