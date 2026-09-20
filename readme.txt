@@ -100,7 +100,7 @@ No. Service tokens carry a `common_name` instead of an email and are always deni
 
 = How do I get rid of the review notice? =
 
-Click "Don't show this again" in the notice, or open the review link. Either way the notice stops for your account. It only ever appears on the Dashboard, the Plugins screen and the plugin's own settings page, and only once enforcement has been running for two weeks.
+Follow the review link: that ends it for your account for good. Dismissing the notice instead brings it back after three months, after a year and after two years; dismissing that last reminder ends it as well. The notice only ever appears on the Dashboard, the Plugins screen and the plugin's own settings page, and only once enforcement has been running for two weeks.
 
 = Does it work on multisite? =
 
@@ -113,7 +113,7 @@ Yes. Settings are per site, and uninstalling cleans up every site of the network
 == Changelog ==
 
 = 1.4.1 =
-* The plugin asks for a review on WordPress.org and a star on GitHub: a dismissible notice after two weeks of enforcement, a line on the settings page, and two links in the plugin row. Dismissing it is permanent per user, and uninstalling removes everything it stored.
+* The plugin asks for a review on WordPress.org and a star on GitHub: a dismissible notice after two weeks of enforcement, a line on the settings page, and two links in the plugin row. Dismissing the notice brings it back after three months, a year and two years, then never again; following the review link ends it straight away. Uninstalling removes everything it stored.
 
 = 1.4.0 =
 * The plugin is translatable. It ships catalogs for de_DE, es_ES, it_IT, zh_CN, ja, and pt_BR; further languages can come from translate.wordpress.org.
