@@ -12,7 +12,7 @@ msgstr ""
 "X-Domain: diesis-jwt-auth\n"
 
 #: src/Plugin.php:74
-#: src/ReviewNudgePage.php:135
+#: src/ReviewNudgePage.php:149
 msgid "Access denied."
 msgstr "アクセスが拒否されました。"
 
@@ -44,7 +44,7 @@ msgstr "DIESIS JWT Auth for Cloudflare Access"
 msgid "DIESIS JWT Auth for Cloudflare Access is incomplete. Reinstall the release ZIP containing its dependencies."
 msgstr "DIESIS JWT Auth for Cloudflare Access は不完全です。依存関係を含むリリース ZIP を再インストールしてください。"
 
-#: src/ReviewNudgePage.php:152
+#: src/ReviewNudgePage.php:166
 msgid "Don't show this again"
 msgstr "今後表示しない"
 
@@ -107,7 +107,7 @@ msgstr "設定したパスで有効な Access JWT を要求する"
 msgid "Settings"
 msgstr "設定"
 
-#: src/ReviewNudgePage.php:145
+#: src/ReviewNudgePage.php:159
 msgid "Star on GitHub"
 msgstr "GitHub でスターを付ける"
 
@@ -119,6 +119,6 @@ msgstr "Issuer は HTTPS の cloudflareaccess.com URL である必要があり�
 msgid "Validates Cloudflare Access at the WordPress origin. This plugin does not replace the WordPress login."
 msgstr "WordPress origin で Cloudflare Access を検証します。このプラグインは WordPress のログインを置き換えません。"
 
-#: src/ReviewNudgePage.php:144
+#: src/ReviewNudgePage.php:158
 msgid "Write a review"
 msgstr "レビューを書く"

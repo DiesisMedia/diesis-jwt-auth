@@ -115,8 +115,22 @@ final class ReviewNudgePage
         $this->authorize(self::REVIEW_ACTION);
         $this->save(ReviewNudge::rated($this->state()));
 
-        // wp_safe_redirect() would drop an external host and send the user back to wp-admin.
-        wp_redirect(self::REVIEW_URL);
+        // wp_safe_redirect() only keeps the site's own host, so allow the one
+        // destination this handler ever redirects to.
+        add_filter(
+            'allowed_redirect_hosts',
+            /**
+             * @param list<string> $hosts
+             * @return list<string>
+             */
+            static function (array $hosts): array {
+                $hosts[] = 'wordpress.org';
+
+                return $hosts;
+            }
+        );
+
+        wp_safe_redirect(self::REVIEW_URL);
         exit;
     }
 
