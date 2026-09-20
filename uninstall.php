@@ -9,6 +9,7 @@
 
 declare(strict_types=1);
 
+use Diesis\JwtAuth\ReviewNudge;
 use Diesis\JwtAuth\Settings;
 use Diesis\JwtAuth\SigningKeyCache;
 
@@ -22,6 +23,8 @@ require_once __DIR__ . '/src/Settings.php';
 require_once __DIR__ . '/src/TransientStore.php';
 require_once __DIR__ . '/src/WordPressTransientStore.php';
 require_once __DIR__ . '/src/SigningKeyCache.php';
+require_once __DIR__ . '/src/ReviewNudgeState.php';
+require_once __DIR__ . '/src/ReviewNudge.php';
 
 (static function (): void {
     /** @var array<string, true> $issuers */
@@ -33,6 +36,7 @@ require_once __DIR__ . '/src/SigningKeyCache.php';
     $forgetSite = static function () use (&$issuers): void {
         $issuer = Settings::parse(get_option(Settings::OPTION, []))->issuer;
         delete_option(Settings::OPTION);
+        delete_option(ReviewNudge::ENFORCING_SINCE_OPTION);
 
         if ($issuer !== '') {
             $issuers[$issuer] = true;
@@ -72,4 +76,8 @@ require_once __DIR__ . '/src/SigningKeyCache.php';
     foreach (array_keys($issuers) as $issuer) {
         SigningKeyCache::forWordPress($issuer)->purge();
     }
+
+    // User meta is global on multisite, so one pass clears the review request
+    // for every user of the network.
+    delete_metadata('user', 0, ReviewNudge::USER_META, '', true);
 })();

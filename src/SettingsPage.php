@@ -11,7 +11,7 @@ namespace Diesis\JwtAuth;
 final class SettingsPage
 {
     private const GROUP = 'diesis_jwt_auth';
-    private const SLUG = 'diesis-jwt-auth';
+    public const SLUG = 'diesis-jwt-auth';
 
     public function register(string $pluginFile): void
     {
@@ -143,6 +143,13 @@ final class SettingsPage
                 </table>
                 <?php submit_button(); ?>
             </form>
+            <?php
+            /**
+             * Runs inside the settings page wrapper, below the form, for
+             * anything that belongs on this page but not in the settings.
+             */
+            do_action('diesis_jwt_auth_after_settings_form');
+            ?>
         </div>
         <?php
     }
