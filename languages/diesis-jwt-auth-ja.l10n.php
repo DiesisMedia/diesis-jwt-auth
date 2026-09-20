@@ -22,6 +22,7 @@ return array(
         'Optional defense in depth. Enter one address per line. Leave empty to trust the Access policy.' => '任意の追加防御。1行に1つのアドレスを入力してください。空欄のままにすると Access policy を信頼します。',
         'Protected paths' => '保護するパス',
         'Rate this plugin' => 'このプラグインを評価',
+        'Remind me later' => '後で通知する',
         'Require a valid Access JWT on the configured paths' => '設定したパスで有効な Access JWT を要求する',
         'Settings' => '設定',
         'Star on GitHub' => 'GitHub でスターを付ける',

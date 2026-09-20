@@ -100,7 +100,7 @@ No. Service tokens carry a `common_name` instead of an email and are always deni
 
 = How do I get rid of the review notice? =
 
-Follow the review link: that ends it for your account for good. Dismissing the notice instead brings it back after three months, after a year and after two years; dismissing that last reminder ends it as well. The notice only ever appears on the Dashboard, the Plugins screen and the plugin's own settings page, and only once enforcement has been running for two weeks.
+Follow the review link: that ends it for your account for good. "Remind me later" brings the notice back after three months, after a year and after two years; the last reminder offers "Don't show this again" instead and ends it as well. The notice only ever appears on the Dashboard, the Plugins screen and the plugin's own settings page, and only once enforcement has been running for two weeks.
 
 = Does it work on multisite? =
 

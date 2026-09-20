@@ -22,6 +22,7 @@ return array(
         'Optional defense in depth. Enter one address per line. Leave empty to trust the Access policy.' => '可选的额外防护。请您每行输入一个地址。留空即表示您信任 Access policy。',
         'Protected paths' => '受保护的路径',
         'Rate this plugin' => '评价此插件',
+        'Remind me later' => '稍后提醒我',
         'Require a valid Access JWT on the configured paths' => '在已配置的路径上要求有效的 Access JWT',
         'Settings' => '设置',
         'Star on GitHub' => '在 GitHub 上点星标',

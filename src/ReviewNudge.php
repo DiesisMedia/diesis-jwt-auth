@@ -57,6 +57,15 @@ final class ReviewNudge
     }
 
     /**
+     * Whether the notice being shown right now is the last one, so the
+     * dismissal link can say what it really does.
+     */
+    public static function endsWithNextDismissal(ReviewNudgeState $state): bool
+    {
+        return $state->dismissals >= count(self::REMINDERS);
+    }
+
+    /**
      * Record a dismissal. Dismissing the last reminder ends the request.
      */
     public static function dismissed(ReviewNudgeState $state, int $now): ReviewNudgeState

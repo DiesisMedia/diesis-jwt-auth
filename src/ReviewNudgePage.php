@@ -59,13 +59,15 @@ final class ReviewNudgePage
             return;
         }
 
-        if (! ReviewNudge::shouldShow($this->enforcingSince(), $this->enforcing(), $this->state(), time())) {
+        $state = $this->state();
+
+        if (! ReviewNudge::shouldShow($this->enforcingSince(), $this->enforcing(), $state, time())) {
             return;
         }
 
         wp_admin_notice(
             esc_html__('Is DIESIS JWT Auth doing its job? A short review on WordPress.org and a star on GitHub help other site owners find it.', 'diesis-jwt-auth')
-                . ' ' . $this->links(true),
+                . ' ' . $this->links() . ' &middot; ' . $this->dismissalLink($state),
             ['type' => 'info', 'dismissible' => true]
         );
     }
@@ -79,7 +81,7 @@ final class ReviewNudgePage
     {
         echo '<p class="description">'
             . esc_html__('Happy with this plugin? Rate it on WordPress.org or star it on GitHub.', 'diesis-jwt-auth')
-            . ' ' . wp_kses($this->links(false), self::LINK_HTML)
+            . ' ' . wp_kses($this->links(), self::LINK_HTML)
             . '</p>';
     }
 
@@ -149,22 +151,24 @@ final class ReviewNudgePage
         check_admin_referer($action);
     }
 
-    private function links(bool $withDismissal): string
+    private function links(): string
     {
-        $links = [
-            $this->link($this->actionUrl(self::REVIEW_ACTION), esc_html__('Write a review', 'diesis-jwt-auth')),
-            $this->link(self::GITHUB_URL, esc_html__('Star on GitHub', 'diesis-jwt-auth')),
-        ];
+        return $this->link($this->actionUrl(self::REVIEW_ACTION), esc_html__('Write a review', 'diesis-jwt-auth'))
+            . ' &middot; '
+            . $this->link(self::GITHUB_URL, esc_html__('Star on GitHub', 'diesis-jwt-auth'));
+    }
 
-        if ($withDismissal) {
-            $links[] = sprintf(
-                '<a href="%s">%s</a>',
-                esc_url($this->actionUrl(self::DISMISS_ACTION)),
-                esc_html__('Don\'t show this again', 'diesis-jwt-auth')
-            );
-        }
+    /**
+     * The label says what the click does: postpone the notice, or, on the last
+     * reminder, end it.
+     */
+    private function dismissalLink(ReviewNudgeState $state): string
+    {
+        $label = ReviewNudge::endsWithNextDismissal($state)
+            ? esc_html__('Don\'t show this again', 'diesis-jwt-auth')
+            : esc_html__('Remind me later', 'diesis-jwt-auth');
 
-        return implode(' &middot; ', $links);
+        return sprintf('<a href="%s">%s</a>', esc_url($this->actionUrl(self::DISMISS_ACTION)), $label);
     }
 
     /**

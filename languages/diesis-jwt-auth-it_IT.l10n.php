@@ -22,6 +22,7 @@ return array(
         'Optional defense in depth. Enter one address per line. Leave empty to trust the Access policy.' => 'Protezione aggiuntiva facoltativa. Inserisca un indirizzo per riga. Lasci vuoto per fidarsi della Access policy.',
         'Protected paths' => 'Percorsi protetti',
         'Rate this plugin' => 'Valuta questo plugin',
+        'Remind me later' => 'Ricordamelo più tardi',
         'Require a valid Access JWT on the configured paths' => 'Richiedere un Access JWT valido sui percorsi configurati',
         'Settings' => 'Impostazioni',
         'Star on GitHub' => 'Lascia una stella su GitHub',

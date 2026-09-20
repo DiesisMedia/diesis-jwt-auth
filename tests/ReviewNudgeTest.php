@@ -92,6 +92,13 @@ final class ReviewNudgeTest extends TestCase
         self::assertTrue($state->done);
     }
 
+    public function testOnlyTheLastReminderAnnouncesThatItIsTheLast(): void
+    {
+        self::assertFalse(ReviewNudge::endsWithNextDismissal(new ReviewNudgeState()));
+        self::assertFalse(ReviewNudge::endsWithNextDismissal(new ReviewNudgeState(self::NOW, 2, false)));
+        self::assertTrue(ReviewNudge::endsWithNextDismissal(new ReviewNudgeState(self::NOW, 3, false)));
+    }
+
     public function testFollowingTheReviewLinkEndsTheRequest(): void
     {
         self::assertTrue(ReviewNudge::rated(new ReviewNudgeState())->done);
