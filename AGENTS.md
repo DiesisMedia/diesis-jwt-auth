@@ -9,3 +9,7 @@ Issues are tracked in this repo's GitHub Issues (github.com/DiesisMedia/diesis-j
 ### Domain docs
 
 Single-context: one `CONTEXT.md` and `docs/adr/` at the repo root, created lazily. See `docs/agents/domain.md`.
+
+### Releases
+
+When preparing or publishing a release, follow [docs/releasing.md](docs/releasing.md).
