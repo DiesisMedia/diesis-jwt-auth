@@ -4,7 +4,7 @@ Tags: cloudflare, access, jwt, authentication, security
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,6 +111,9 @@ Yes. Settings are per site, and uninstalling cleans up every site of the network
 1. The settings page: enforcement toggle, issuer, application audience, optional allowed emails, protected and excluded paths.
 
 == Changelog ==
+
+= 1.4.2 =
+* Updated the bundled firebase/php-jwt library to 7.1.1.
 
 = 1.4.1 =
 * The plugin asks for a review on WordPress.org and a star on GitHub: a dismissible notice after two weeks of enforcement, a line on the settings page, and two links in the plugin row. Dismissing the notice brings it back after three months, a year and two years, then never again; following the review link ends it straight away. Uninstalling removes everything it stored.

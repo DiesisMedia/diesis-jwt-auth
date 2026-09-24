@@ -4,7 +4,7 @@
  * Plugin Name: DIESIS JWT Auth for Cloudflare Access
  * Plugin URI: https://github.com/DiesisMedia/diesis-jwt-auth
  * Description: Validates Cloudflare Access JWTs at the WordPress origin for selected paths.
- * Version: 1.4.1
+ * Version: 1.4.2
  * Requires at least: 6.8
  * Requires PHP: 8.1
  * Author: DIESIS Media - Florian Gratzl

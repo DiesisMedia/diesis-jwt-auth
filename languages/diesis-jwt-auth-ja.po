@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: DIESIS JWT Auth for Cloudflare Access 1.4.1\n"
+"Project-Id-Version: DIESIS JWT Auth for Cloudflare Access 1.4.2\n"
 "Report-Msgid-Bugs-To: https://github.com/DiesisMedia/diesis-jwt-auth/issues\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
