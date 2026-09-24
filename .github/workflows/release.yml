@@ -82,7 +82,8 @@ jobs:
         run: |
           # Build before pushing, so a failed build leaves no tag behind.
           chmod +x bin/build-release.sh bin/strauss.sh
-          zip="$(bin/build-release.sh "$VERSION")"
+          bin/build-release.sh "$VERSION"
+          zip="dist/diesis-jwt-auth-$VERSION.zip"
           git push --atomic origin HEAD:main "v$VERSION"
           notes="$(printf '%s\n\nNo code or settings changes.\n\nSHA-256 of `%s`: `%s`' \
             "${ENTRIES//\* /}" "$(basename "$zip")" "$(sha256sum "$zip" | cut -d' ' -f1)")"
