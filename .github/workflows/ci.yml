@@ -69,8 +69,8 @@ jobs:
           build-dir: dist/unpacked/diesis-jwt-auth
           strict: true
 
-  # Merges a green Dependabot update unless it is a major version bump or
-  # touches the deploy action; both wait for a manual review. The release
+  # Merges a green Dependabot minor or patch update unless it touches the
+  # deploy action. Everything else waits for a manual review. The release
   # workflow then decides whether the merge warrants a new plugin release.
   dependabot:
     runs-on: ubuntu-latest
@@ -84,7 +84,8 @@ jobs:
       - id: meta
         uses: dependabot/fetch-metadata@v2
       - if: >-
-          steps.meta.outputs.update-type != 'version-update:semver-major' &&
+          (steps.meta.outputs.update-type == 'version-update:semver-minor' ||
+           steps.meta.outputs.update-type == 'version-update:semver-patch') &&
           !contains(steps.meta.outputs.dependency-names, '10up/action-wordpress-plugin-deploy')
         env:
           GH_TOKEN: ${{ github.token }}
