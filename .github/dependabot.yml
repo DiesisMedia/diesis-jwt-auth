@@ -1,0 +1,28 @@
+# Weekly version updates. Security updates are enabled in the repository settings.
+version: 2
+updates:
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore(deps)
+    groups:
+      # Dev tools in one PR; runtime dependencies stay separate.
+      dev-dependencies:
+        dependency-type: development
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    groups:
+      github-actions:
+        patterns:
+          - '*'
+        # The deploy action only runs on release tags, so PR CI never tests it.
+        # A separate PR keeps its updates visible for a manual review.
+        exclude-patterns:
+          - 10up/action-wordpress-plugin-deploy
