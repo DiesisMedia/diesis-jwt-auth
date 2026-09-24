@@ -68,3 +68,29 @@ jobs:
         with:
           build-dir: dist/unpacked/diesis-jwt-auth
           strict: true
+
+  # Merges a green Dependabot update unless it is a major version bump or
+  # touches the deploy action; both wait for a manual review. The release
+  # workflow then decides whether the merge warrants a new plugin release.
+  dependabot:
+    runs-on: ubuntu-latest
+    needs: package
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write # Starts the release workflow.
+    steps:
+      - id: meta
+        uses: dependabot/fetch-metadata@v2
+      - if: >-
+          steps.meta.outputs.update-type != 'version-update:semver-major' &&
+          !contains(steps.meta.outputs.dependency-names, '10up/action-wordpress-plugin-deploy')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --merge --match-head-commit "$SHA"
+          # A merge made with the workflow token starts no workflows, so start the release here.
+          gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref main

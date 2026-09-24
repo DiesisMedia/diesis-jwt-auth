@@ -6,3 +6,9 @@
 4. Push the annotated tag `vX.Y.Z`.
 
 The tag runs [`deploy-wporg.yml`](../.github/workflows/deploy-wporg.yml), which refuses to continue unless the tag, the plugin header and `Stable tag` agree, then builds the release ZIP and hands it to the WordPress.org SVN deploy. Setting the repository variable `WPORG_DEPLOY_DRY_RUN` to anything other than `false` stops it before the SVN commit.
+
+## Dependency releases
+
+Dependabot updates need no manual steps. CI merges a green update unless it is a major version bump or touches the deploy action; those wait for a manual review. After the merge, [`release.yml`](../.github/workflows/release.yml) checks whether a bundled (runtime) Composer package changed since the last tag. If so, it bumps the patch version, writes the changelog entry, refreshes the catalogs, tags, creates the GitHub release with the ZIP, and starts the WordPress.org deploy. Dev dependencies and actions change nothing that ships, so they cause no release.
+
+If other plugin files changed since the last tag, `release.yml` fails instead: those changes need a hand-written changelog, so release them by hand with the steps above. `release.yml` can also be started by hand from the Actions tab.

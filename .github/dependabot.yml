@@ -1,10 +1,14 @@
 # Weekly version updates. Security updates are enabled in the repository settings.
+# CI merges green non-major updates, and a bundled package update is released
+# automatically, so new versions wait a week before Dependabot proposes them.
 version: 2
 updates:
   - package-ecosystem: composer
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: chore(deps)
     groups:
@@ -16,6 +20,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: ci
     groups:
