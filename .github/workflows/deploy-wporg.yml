@@ -1,6 +1,7 @@
 name: Deploy to WordPress.org
 
-# Runs when a release tag (v1.2.0) is pushed. Builds the same ZIP as CI and
+# Runs when a release tag (v1.2.0) is pushed, or when the dependency release
+# workflow starts it for the tag it created. Builds the same ZIP as CI and
 # hands its contents to the WordPress.org SVN deploy action.
 #
 # Two switches keep this safe before the plugin is approved:
@@ -13,6 +14,7 @@ on:
   push:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
 
 permissions:
   contents: read
