@@ -15,13 +15,13 @@ jobs:
       matrix:
         php: ['8.1', '8.4']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           coverage: none
           tools: composer:v2
-      - uses: ramsey/composer-install@v3
+      - uses: ramsey/composer-install@v4
       - run: composer test
       - run: composer analyse
       - run: composer lint
@@ -46,7 +46,7 @@ jobs:
       contents: read
       pull-requests: write # Plugin Check posts its findings on the PR.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
@@ -57,7 +57,7 @@ jobs:
           echo "value=$(sed -n 's/^ \* Version: //p' diesis-jwt-auth.php)" >> "$GITHUB_OUTPUT"
       - run: chmod +x bin/build-release.sh
       - run: bin/build-release.sh "${{ steps.version.outputs.value }}"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: diesis-jwt-auth-${{ steps.version.outputs.value }}
           path: dist/diesis-jwt-auth-${{ steps.version.outputs.value }}.zip
@@ -82,7 +82,7 @@ jobs:
       actions: write # Starts the release workflow.
     steps:
       - id: meta
-        uses: dependabot/fetch-metadata@v2
+        uses: dependabot/fetch-metadata@v3
       - if: >-
           (steps.meta.outputs.update-type == 'version-update:semver-minor' ||
            steps.meta.outputs.update-type == 'version-update:semver-patch') &&
