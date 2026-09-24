@@ -22,3 +22,7 @@ updates:
       github-actions:
         patterns:
           - '*'
+        # The deploy action only runs on release tags, so PR CI never tests it.
+        # A separate PR keeps its updates visible for a manual review.
+        exclude-patterns:
+          - 10up/action-wordpress-plugin-deploy
