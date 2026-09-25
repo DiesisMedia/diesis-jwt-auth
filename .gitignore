@@ -3,3 +3,4 @@
 /bin/strauss.phar
 /.phpunit.cache/
 /dist/
+.DS_Store
