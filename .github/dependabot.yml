@@ -2,8 +2,8 @@
 # the repository settings. Each ecosystem bundles its minor and patch updates
 # in the group routine-updates; a major comes as its own PR. CI merges green
 # non-major updates, so new versions wait a week before Dependabot proposes
-# them; the cooldown never delays security updates. A merge publishes no
-# release: bundled package updates are released by hand (docs/releasing.md).
+# them; the cooldown never delays security updates. After a merge, release.yml
+# publishes bundled (runtime) package updates automatically (docs/releasing.md).
 version: 2
 updates:
   - package-ecosystem: composer

@@ -96,6 +96,12 @@ jobs:
           PR: ${{ github.event.pull_request.number }}
           SHA: ${{ github.event.pull_request.head.sha }}
         run: |
+          # Only Dependabot's own commits; a commit added by someone else needs a review.
+          authors=$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json commits --jq '[.commits[].authors[].login] | unique | join(",")')
+          if [ "$authors" != "dependabot[bot]" ]; then
+            echo "Commits by $authors; left open for review."
+            exit 0
+          fi
           gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --merge --match-head-commit "$SHA"
           # A merge made with the workflow token starts no workflows, so start the release here.
           gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref main
