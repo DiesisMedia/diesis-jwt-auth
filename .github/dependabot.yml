@@ -1,33 +1,40 @@
-# Weekly version updates. Security updates are enabled in the repository settings.
-# CI merges green non-major updates, and a bundled package update is released
-# automatically, so new versions wait a week before Dependabot proposes them.
+# Daily version updates at 05:00 Vienna time. Security updates are enabled in
+# the repository settings. Each ecosystem bundles its minor and patch updates
+# in the group routine-updates; a major comes as its own PR. CI merges green
+# non-major updates, so new versions wait a week before Dependabot proposes
+# them; the cooldown never delays security updates. A merge publishes no
+# release: bundled package updates are released by hand (docs/releasing.md).
 version: 2
 updates:
   - package-ecosystem: composer
     directory: /
     schedule:
-      interval: weekly
+      interval: daily
+      time: "05:00"
+      timezone: Europe/Vienna
     cooldown:
       default-days: 7
     commit-message:
       prefix: chore(deps)
     groups:
-      # Dev tools in one PR; runtime dependencies stay separate.
-      dev-dependencies:
-        dependency-type: development
+      routine-updates:
+        patterns: ["*"]
+        update-types: [minor, patch]
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
+      interval: daily
+      time: "05:00"
+      timezone: Europe/Vienna
     cooldown:
       default-days: 7
     commit-message:
       prefix: ci
     groups:
-      github-actions:
-        patterns:
-          - '*'
+      routine-updates:
+        patterns: ["*"]
+        update-types: [minor, patch]
         # The deploy action only runs on release tags, so PR CI never tests it.
         # A separate PR keeps its updates visible for a manual review.
         exclude-patterns:
