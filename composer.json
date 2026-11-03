@@ -4,14 +4,14 @@
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.3",
         "firebase/php-jwt": "^7.0"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
         "php-stubs/wordpress-stubs": "^6.8 || ^7.0",
         "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^10.5",
+        "phpunit/phpunit": "^12.5",
         "squizlabs/php_codesniffer": "^3.13",
         "wp-coding-standards/wpcs": "^3.2"
     },

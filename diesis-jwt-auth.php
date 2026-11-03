@@ -6,7 +6,7 @@
  * Description: Validates Cloudflare Access JWTs at the WordPress origin for selected paths.
  * Version: 1.4.4
  * Requires at least: 6.8
- * Requires PHP: 8.1
+ * Requires PHP: 8.3
  * Author: DIESIS Media - Florian Gratzl
  * Author URI: https://diesis.media
  * License: GPL-2.0-or-later
