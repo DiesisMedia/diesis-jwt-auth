@@ -9,7 +9,7 @@ The user-facing description, installation steps, FAQ and changelog live in [`rea
 ## Requirements
 
 - WordPress 6.8 or newer
-- PHP 8.1 or newer with OpenSSL
+- PHP 8.3 or newer with OpenSSL
 - A Cloudflare Access self-hosted application
 - The site must receive the `Cf-Access-Jwt-Assertion` request header from Cloudflare
 
