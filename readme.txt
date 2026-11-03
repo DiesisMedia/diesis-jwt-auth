@@ -4,7 +4,7 @@ Tags: cloudflare, access, jwt, authentication, security
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 1.4.4
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,9 @@ Yes. Settings are per site, and uninstalling cleans up every site of the network
 
 == Changelog ==
 
+= 1.5.0 =
+* Requires PHP 8.3 or newer. PHP 8.1 no longer gets security fixes and PHP 8.2 stops getting them at the end of 2026. WordPress does not install this update on older PHP versions. No other changes.
+
 = 1.4.4 =
 * Updated the bundled firebase/php-jwt library to 7.2.1.
 
@@ -153,6 +156,9 @@ Yes. Settings are per site, and uninstalling cleans up every site of the network
 * Initial release: validates Cloudflare Access JWTs at the WordPress origin, protects configurable login and admin paths, optional email allowlist.
 
 == Upgrade Notice ==
+
+= 1.5.0 =
+Requires PHP 8.3 or newer. No settings change needed.
 
 = 1.4.1 =
 Adds a review request in the admin. No settings change needed.
