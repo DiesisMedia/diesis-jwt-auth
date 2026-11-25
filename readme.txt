@@ -2,9 +2,9 @@
 Contributors: diesismedia
 Tags: cloudflare, access, jwt, authentication, security
 Requires at least: 6.8
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 8.3
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,6 +111,9 @@ Yes. Settings are per site, and uninstalling cleans up every site of the network
 1. The settings page: enforcement toggle, issuer, application audience, optional allowed emails, protected and excluded paths.
 
 == Changelog ==
+
+= 1.5.2 =
+* Tested with WordPress 7.2 RC3 and PHP 8.6. No code or settings changes.
 
 = 1.5.1 =
 * Updated the bundled firebase/php-jwt library to 7.2.2.
